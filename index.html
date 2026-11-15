@@ -4,7 +4,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="color-scheme" content="light dark" />
-    <link rel="icon" href="data:," />
+    <link rel="icon" type="image/png" href="icon-192.png" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
     <title>上岸计划 · 学习系统</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -66,11 +67,11 @@
 
       /* ---------- tabs ---------- */
       .tabs{
-        display:flex; gap:6px; margin:18px 0 20px; background:var(--surface);
+        display:flex; flex-wrap:wrap; gap:6px; margin:18px 0 20px; background:var(--surface);
         border:1px solid var(--line); border-radius:12px; padding:5px; box-shadow:var(--shadow);
       }
       .tabs button{
-        flex:1; border:0; background:transparent; color:var(--muted);
+        flex:1 1 12%; border:0; background:transparent; color:var(--muted);
         border-radius:8px; padding:9px 4px; font-weight:700; font-size:15px; min-height:44px;
       }
       .tabs button[aria-selected="true"]{ background:var(--brand); color:var(--brand-ink); }
@@ -98,13 +99,6 @@
       .block .done-mark{ flex:0 0 auto; align-self:center; font-size:13px; font-weight:700; color:var(--ok); display:none; }
       .block.fin .done-mark{ display:block; }
       .block.fin .what b{ color:var(--muted); text-decoration:line-through; text-decoration-thickness:1px; }
-      .timer-face{
-        font-family:"Noto Serif SC",serif; font-size:44px; font-weight:900; text-align:center;
-        letter-spacing:2px; margin:6px 0 2px; font-variant-numeric:tabular-nums;
-      }
-      .timer-cap{ text-align:center; color:var(--muted); font-size:13px; margin-bottom:12px; }
-      .timer-btns{ display:flex; gap:8px; }
-      .timer-btns button{ flex:1; }
       .next-lesson{
         margin-top:16px; border:1px solid var(--line); border-left:4px solid var(--accent);
         background:var(--surface); border-radius:10px; padding:14px 16px;
@@ -176,6 +170,40 @@
       .chip.now{ background:var(--accent-soft); color:var(--accent); }
       .chip.gold{ background:var(--gold-soft); color:var(--gold); }
       .note-line{ font-size:13px; color:var(--muted); margin-top:10px; }
+
+      /* ---------- course map: module filter + collapsible groups ---------- */
+      .course-filter{ display:flex; gap:8px; flex-wrap:wrap; margin:2px 0 4px; }
+      .group-head{
+        display:flex; gap:12px; align-items:center; width:100%; text-align:left;
+        background:var(--surface2); border:1px solid var(--line); border-radius:var(--radius);
+        padding:13px 16px; margin-top:16px; color:var(--ink); box-shadow:var(--shadow);
+      }
+      .group-head .gh-name{ font-family:"Noto Serif SC",serif; font-size:17px; font-weight:900; }
+      .group-head .gh-meta{ flex:1; font-size:13px; color:var(--muted); }
+      .group-head .gh-chev{ flex:0 0 auto; font-size:14px; color:var(--muted); transition:transform .2s ease; }
+      .group-head.open .gh-chev{ transform:rotate(90deg); }
+      .group-body{ display:none; }
+      .group-body.open{ display:block; }
+      @media (prefers-reduced-motion: reduce){ .group-head .gh-chev{ transition:none; } }
+
+      /* ---------- collapsible teaching blocks ---------- */
+      .t-block h3.teach-h{ cursor:pointer; margin-bottom:0; }
+      .t-block .teach-body{ margin-top:10px; }
+      .t-block.closed .teach-body{ display:none; }
+      .t-block .t-chev{ margin-left:auto; font-size:13px; color:var(--muted); transition:transform .2s ease; }
+      .t-block.open .t-chev{ transform:rotate(90deg); }
+      @media (prefers-reduced-motion: reduce){ .t-block .t-chev{ transition:none; } }
+
+      /* ---------- question bank ---------- */
+      .bank-row{
+        display:flex; gap:14px; align-items:center; width:100%; text-align:left;
+        background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+        padding:14px 16px; margin-top:10px; box-shadow:var(--shadow); color:var(--ink);
+      }
+      .bank-row .lr-main{ flex:1; min-width:0; }
+      .bank-row .lr-main b{ font-size:16px; display:block; }
+      .bank-row .lr-meta{ font-size:13px; color:var(--muted); margin-top:2px; }
+      .bank-msg{ margin-top:14px; }
 
       /* ---------- lesson player ---------- */
       .crumb{ display:flex; align-items:center; gap:10px; margin-bottom:14px; flex-wrap:wrap; }
@@ -379,22 +407,7 @@
       .rub-row .rmax{ font-size:13px; color:var(--muted); flex:0 0 auto; }
       .rub-total{ margin-top:12px; font-size:16px; font-weight:900; font-family:"Noto Serif SC",serif; }
 
-      /* ---------- settings / sync ---------- */
-      .fld{ margin:12px 0; }
-      .fld label{ display:block; font-size:13.5px; font-weight:700; color:var(--muted); margin-bottom:5px; }
-      .fld input{
-        width:100%; padding:11px 13px; font:inherit; font-size:15px;
-        border:1.5px solid var(--line); border-radius:10px; background:var(--surface); color:var(--ink);
-      }
-      .fld input:focus{ outline:2px solid var(--brand); outline-offset:1px; }
-      .sync-status{ font-size:14px; margin-top:10px; line-height:1.7; }
-      .sync-status.ok{ color:var(--ok); }
-      .sync-status.bad{ color:var(--bad); }
-      .sql-box{
-        background:var(--surface2); border-radius:10px; padding:12px 14px; margin-top:10px;
-        font-family:ui-monospace,Menlo,Consolas,monospace; font-size:12.5px; line-height:1.65;
-        white-space:pre-wrap; word-break:break-all; max-height:260px; overflow:auto;
-      }
+      /* ---------- settings ---------- */
       .set-note{ font-size:13.5px; color:var(--muted); line-height:1.75; }
       .modsum{ display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-top:14px; }
       .modsum .ms{
@@ -406,7 +419,7 @@
   <body>
     <div class="wrap">
 
-      <div class="net-banner" id="netBanner">当前处于离线状态。本页的课程、题目和错题都已内置在页面里，可以照常学习，进度会保存在这台设备上；联网后云端同步会自动继续。</div>
+      <div class="net-banner" id="netBanner">当前处于离线状态。本页的课程、题目和错题都已内置在页面里，可以照常学习，进度会保存在这台设备上。</div>
 
       <!-- status strip -->
       <div class="statusbar">
@@ -427,6 +440,7 @@
       <nav class="tabs" role="tablist" aria-label="学习系统导航">
         <button role="tab" id="tabBtn-today" aria-selected="true" data-view="today">今日学习</button>
         <button role="tab" id="tabBtn-course" aria-selected="false" data-view="course">课程地图</button>
+        <button role="tab" id="tabBtn-bank" aria-selected="false" data-view="bank">题库刷题</button>
         <button role="tab" id="tabBtn-eval" aria-selected="false" data-view="eval">学习评价</button>
         <button role="tab" id="tabBtn-exam" aria-selected="false" data-view="exam">模拟考试</button>
         <button role="tab" id="tabBtn-essay" aria-selected="false" data-view="essay">申论写作</button>
@@ -468,16 +482,7 @@
             <div class="next-lesson" id="nextLessonBox"></div>
           </div>
           <div>
-            <div class="card">
-              <h3>学习计时</h3>
-              <div class="timer-face" id="studyTimer">00:00</div>
-              <div class="timer-cap">今日目标 120 分钟 · 按天累计，关掉页面不丢失</div>
-              <div class="timer-btns">
-                <button class="btn" id="timerToggle">开始计时</button>
-                <button class="btn ghost" id="timerReset">清零</button>
-              </div>
-            </div>
-            <div class="card checkin" id="checkinCard" style="margin-top:16px;">
+            <div class="card checkin" id="checkinCard">
               <h3>今日打卡</h3>
               <p id="checkinHint">先完成一次随堂测、强化训练或模拟考试，就能打卡。</p>
               <button class="btn accent" id="checkinBtn" disabled>完成今日打卡</button>
@@ -497,6 +502,15 @@
           <span class="sub">按顺序学：上一课随堂测 ≥ 4 分过关，才解锁下一课</span>
         </div>
         <div id="courseMap"></div>
+      </section>
+
+      <!-- ============ QUESTION BANK ============ -->
+      <section class="view" id="view-bank">
+        <div class="sec-head">
+          <h2>题库刷题</h2>
+          <span class="sub">「没钱考什么公」行测题库 · 只收有解析的题 · 按模块随机抽 10 题一组</span>
+        </div>
+        <div id="bankBody"></div>
       </section>
 
       <!-- ============ EVAL ============ -->
@@ -530,7 +544,7 @@
       <section class="view" id="view-settings">
         <div class="sec-head">
           <h2>设置</h2>
-          <span class="sub">云端同步 · 离线使用 · 数据备份</span>
+          <span class="sub">本地进度 · 离线使用 · 数据备份</span>
         </div>
         <div id="settingsBody"></div>
       </section>
@@ -551,8 +565,9 @@
 
       <p class="foot-note">
         全系统共 22 节基础课、7 组强化训练和 1 套模拟考试，合计 155 道题，另有按模块随机抽题的练习池可反复练习。第 1 至 14 课中，言语、判断、数量、常识各课及对应强化训练、模拟考试的大部分题目为历年真题，选自「没钱考什么公」题库，解析末尾标注了来源；图形推理、资料分析、申论三部分因原题依赖图片与材料文本（题库中的材料文本已损坏），采用按真题题型编写的练习题。新增的第 15 至 22 课和申论、常识强化训练（二）同样为按真题题型编写的练习题，页面上均有标注。<br />
+        「题库刷题」页签是「没钱考什么公」的行测真题库：言语、判断、数量、常识、政治五个模块共 30,932 道，只收有解析的题，按模块随机抽 10 题一组，答错同样进错题本。题库数据文件（manifest.json 与各模块分块文件）和本页放在同一目录，打开题库时按需加载对应模块，第一次加载需要联网。<br />
         完整模拟考的行测 120 题按河南省考真实考试的模块题量（常识 20、言语 35、数量 15、判断 30、资料 20）从全系统题库组卷，并补充了按真题题型编写的练习题补足题量；申论部分为写作题，写完对照参考要点和范文思路自评打分。申论写作页另有 4 道分题型写作练习。<br />
-        学习进度、成绩、错题记录与打卡记录保存在这台设备的浏览器里，关掉页面再打开不会丢；在 Safari 里把本页添加到主屏幕，之后从桌面图标打开即可。不绑账号；清除浏览器数据或更换设备后记录无法恢复。想跨设备保存，可在「设置」里填入你自己的 Supabase 地址和 anon key，进度与错题就会同步到你自己的云端；不填则只存本机。本页全部内容都内置在这一个文件里，断网时只要页面还开着就能继续学；「设置」里还能下载一份离线文件，没网时打开文件即可使用。
+        学习进度、成绩、错题记录与打卡记录保存在这台设备的浏览器里，关掉页面再打开不会丢；在 Safari 里把本页添加到主屏幕，之后从桌面图标打开即可。不绑账号；清除浏览器数据或更换设备后记录无法恢复，想跨设备保存可在「设置」里导出进度 JSON 备份，再在新设备上导入恢复。本页全部内容都内置在这一个文件里，断网时只要页面还开着就能继续学；「设置」里还能下载一份离线文件，没网时打开文件即可使用。
       </p>
     </div>
 
@@ -3591,12 +3606,10 @@
         checkedIn: false
       };
       var checkinDates = {};   // "YYYY-M-D" -> true，全部历史打卡
-      var savedStudySec = 0;   // 今天已累计的学习秒数（恢复用）
       function saveState() {
         try {
           localStorage.setItem(LS_KEY, JSON.stringify(snapshotState()));
         } catch (e) { /* 浏览器禁用本地存储时退回本次打开内有效 */ }
-        scheduleSync();
       }
       (function loadState() {
         try {
@@ -3654,6 +3667,163 @@
         currentTab = "course";
         startQuiz({ kind: "pool", id: "POOL-" + mod, title: mod + " · 随机练习", mod: mod, items: items, mode: "instant" });
       }
+      /* ================= 题库刷题（题库文件与本页同目录，按需加载） ================= */
+      // manifest.json 记各模块题数与分块清单；分块文件如 verbal-001.json（相对路径）
+      // 每题字段：id、s 题干、o 选项数组、a 正确选项下标、w 解析。资料分析不做（无可用材料文本）
+      var BANK_DEFS = [
+        { key: "verbal", name: "言语理解", chunks: 12, total: 11248 },
+        { key: "logic", name: "判断推理", chunks: 17, total: 16153 },
+        { key: "math", name: "数量关系", chunks: 3, total: 2224 },
+        { key: "common", name: "常识判断", chunks: 2, total: 1084 },
+        { key: "politics", name: "政治理论", chunks: 1, total: 223 }
+      ];
+      var bankMods = null;   // [{key,name,files:[...],total}]，读 manifest 后生成，读不到用内置清单
+      var bankTried = false;
+      var bankCache = {};    // 模块 key -> {file, items}，只缓存该模块最近加载的一个分块
+      var bankBusy = {};     // 模块 key -> 正在加载
+      var bankErr = {};      // 模块 key -> 错误提示
+      function bankPad(n) { return (n < 10 ? "00" : n < 100 ? "0" : "") + n; }
+      function bankNameFor(key) {
+        for (var i = 0; i < BANK_DEFS.length; i++) if (BANK_DEFS[i].key === key) return BANK_DEFS[i].name;
+        return key;
+      }
+      function bankFallbackMods() {
+        var out = [];
+        for (var i = 0; i < BANK_DEFS.length; i++) {
+          var d = BANK_DEFS[i], files = [];
+          for (var c = 1; c <= d.chunks; c++) files.push(d.key + "-" + bankPad(c) + ".json");
+          out.push({ key: d.key, name: d.name, files: files, total: d.total });
+        }
+        return out;
+      }
+      // 兼容几种 manifest 写法：{key:{count,chunks:[...]}}、{key:[文件名,...]}、{modules:[{key,files,...}]}
+      function bankParseManifest(mf) {
+        var out = [], i, k;
+        function filesOf(info, key) {
+          var files = [], total = 0, list = null, j, it;
+          if (Array.isArray(info)) list = info;
+          else if (info && typeof info === "object") {
+            total = info.count || info.total || info.num || 0;
+            list = info.chunks || info.files || info.parts || null;
+            if (!list && info.chunkCount) for (j = 1; j <= info.chunkCount; j++) files.push(key + "-" + bankPad(j) + ".json");
+          }
+          if (list) for (j = 0; j < list.length; j++) {
+            it = list[j];
+            if (typeof it === "string") files.push(it);
+            else if (it && (it.file || it.name)) files.push(it.file || it.name);
+          }
+          return { files: files, total: total };
+        }
+        var src = null;
+        if (Array.isArray(mf)) src = mf;
+        else if (mf && typeof mf === "object") src = mf.modules || mf;
+        if (Array.isArray(src)) {
+          for (i = 0; i < src.length; i++) {
+            var it2 = src[i];
+            if (!it2 || typeof it2 !== "object") continue;
+            var key = it2.key || it2.module || it2.id;
+            if (!key) continue;
+            var r = filesOf(it2, key);
+            if (r.files.length) out.push({ key: key, name: it2.name || bankNameFor(key), files: r.files, total: r.total || it2.count || it2.total || 0 });
+          }
+        } else if (src && typeof src === "object") {
+          for (k in src) {
+            if (k === "total" || k === "version" || k === "generated") continue;
+            var r2 = filesOf(src[k], k);
+            if (r2.files.length) out.push({ key: k, name: bankNameFor(k), files: r2.files, total: r2.total });
+          }
+        }
+        var order = {};
+        for (i = 0; i < BANK_DEFS.length; i++) order[BANK_DEFS[i].key] = i;
+        out.sort(function (a, b) { return (order[a.key] === undefined ? 99 : order[a.key]) - (order[b.key] === undefined ? 99 : order[b.key]); });
+        for (i = 0; i < out.length; i++) {
+          if (!out[i].total) for (var di = 0; di < BANK_DEFS.length; di++) if (BANK_DEFS[di].key === out[i].key) out[i].total = BANK_DEFS[di].total;
+        }
+        return out;
+      }
+      function bankEnsureManifest(done) {
+        if (bankMods) { done(); return; }
+        if (bankTried) { bankMods = bankFallbackMods(); done(); return; }
+        bankTried = true;
+        fetch("manifest.json").then(function (r) {
+          if (!r.ok) throw new Error("manifest " + r.status);
+          return r.json();
+        }).then(function (mf) {
+          var parsed = bankParseManifest(mf);
+          bankMods = parsed.length ? parsed : bankFallbackMods();
+          done();
+        }).catch(function () {
+          bankMods = bankFallbackMods();
+          done();
+        });
+      }
+      function bankEsc(t) {
+        return String(t == null ? "" : t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      }
+      function renderBank() {
+        bankEnsureManifest(function () {
+          if (currentTab === "bank" && !$("view-player").classList.contains("on")) renderBankList();
+        });
+        renderBankList();
+      }
+      function renderBankList() {
+        var mods = bankMods || bankFallbackMods();
+        var html = '<div class="card"><h3>选一个模块，随机抽 10 题</h3>' +
+          '<p style="color:var(--muted);font-size:14.5px;margin:0;">点选作答、即时判分，每题都带解析；答错的题自动进错题本，成绩计入学习评价。每个模块第一次抽题时要加载题库分块文件，需要联网。</p></div>';
+        for (var i = 0; i < mods.length; i++) {
+          var m = mods[i], r = S.results["BANK-" + m.key], busy = !!bankBusy[m.key];
+          html += '<div class="bank-row"><span class="lr-main"><b>' + m.name + '</b><span class="lr-meta">共 ' + (m.total || "—") + ' 道有解析的题 · 随机抽 10 题一组 · 6 分过关</span></span>' +
+            (r ? '<span class="chip ' + (r.score >= 6 ? "ok" : "gold") + '">上次 ' + r.score + "/" + r.total + "</span>" : "") +
+            '<button class="btn' + (busy ? "" : " accent") + '" data-act="bank-start" data-arg="' + m.key + '"' + (busy ? " disabled" : "") + ">" + (busy ? "加载中…" : "抽 10 题") + "</button></div>";
+          if (bankErr[m.key]) html += '<div class="advice bank-msg">' + bankErr[m.key] + ' <button class="btn ghost sm" data-act="bank-start" data-arg="' + m.key + '">重试</button></div>';
+        }
+        $("bankBody").innerHTML = html;
+      }
+      function startBankQuiz(key) {
+        if (bankBusy[key]) return;
+        bankEnsureManifest(function () { bankLoadAndStart(key); });
+      }
+      function bankLoadAndStart(key) {
+        var mods = bankMods || bankFallbackMods(), mod = null, i;
+        for (i = 0; i < mods.length; i++) if (mods[i].key === key) mod = mods[i];
+        if (!mod || !mod.files.length) return;
+        function go(items) {
+          var pool = items.slice(), a, b, t;
+          for (a = pool.length - 1; a > 0; a--) { b = Math.floor(Math.random() * (a + 1)); t = pool[a]; pool[a] = pool[b]; pool[b] = t; }
+          var qs = [];
+          for (var j = 0; j < pool.length && qs.length < 10; j++) {
+            var q = pool[j];
+            if (!q || !q.o || q.o.length !== 4 || typeof q.a !== "number" || q.a < 0 || q.a >= q.o.length) continue;
+            var opts = [];
+            for (var oi = 0; oi < q.o.length; oi++) opts.push(bankEsc(q.o[oi]));
+            qs.push({ s: bankEsc(q.s), o: opts, a: q.a, w: bankEsc(q.w), mod: mod.name });
+          }
+          if (!qs.length) { bankErr[key] = "这个分块里没读到可用题目，再抽一次试试。"; if (currentTab === "bank") renderBankList(); return; }
+          currentTab = "bank";
+          startQuiz({ kind: "bank", id: "BANK-" + key, bankKey: key, title: mod.name + " · 题库刷题", mod: mod.name, items: qs, mode: "instant" });
+        }
+        var cached = bankCache[key];
+        // 已缓存的分块半数概率直接复用（省流量），否则随机换一个分块加载，保证题目新鲜
+        if (cached && cached.items.length >= 10 && Math.random() < 0.5) { go(cached.items); return; }
+        var file = mod.files[Math.floor(Math.random() * mod.files.length)];
+        if (cached && cached.file === file) { go(cached.items); return; }
+        bankBusy[key] = true; bankErr[key] = null;
+        if (currentTab === "bank") renderBankList();
+        fetch(file).then(function (r) {
+          if (!r.ok) throw new Error("chunk " + r.status);
+          return r.json();
+        }).then(function (data) {
+          bankBusy[key] = false;
+          var items = Array.isArray(data) ? data : (data && (data.questions || data.items || data.list)) || [];
+          bankCache[key] = { file: file, items: items };
+          go(items);
+        }).catch(function () {
+          bankBusy[key] = false;
+          bankErr[key] = "题库文件 " + file + " 加载失败（多半是没联网，或文件还没传到本题库目录）。";
+          if (currentTab === "bank") renderBankList();
+        });
+      }
+
       /* ================= 错题本 ================= */
       // 题目身份：按题干 + 选项 + 答案算指纹。同一道题无论从随堂测、练习池还是模拟考里答错，都只记一条
       function qKey(q) {
@@ -3762,18 +3932,19 @@
       var currentTab = "today";
       function showView(name) {
         if (Q && Q.timerId) { clearInterval(Q.timerId); Q.timerId = null; }
-        var views = ["today", "course", "eval", "exam", "essay", "wrong", "settings", "player"];
+        var views = ["today", "course", "bank", "eval", "exam", "essay", "wrong", "settings", "player"];
         for (var i = 0; i < views.length; i++) {
           $("view-" + views[i]).classList.toggle("on", views[i] === name);
         }
         var tabFor = name === "player" ? currentTab : name;
-        var tabs = ["today", "course", "eval", "exam", "essay", "wrong", "settings"];
+        var tabs = ["today", "course", "bank", "eval", "exam", "essay", "wrong", "settings"];
         for (var j = 0; j < tabs.length; j++) {
           $("tabBtn-" + tabs[j]).setAttribute("aria-selected", tabs[j] === tabFor ? "true" : "false");
         }
         if (name !== "player") currentTab = name;
         if (name === "today") renderToday();
         if (name === "course") renderCourse();
+        if (name === "bank") renderBank();
         if (name === "eval") { renderEval(); if (S.log.length) { S.flags.reviewed = true; saveState(); renderToday(); } }
         if (name === "exam") renderExamIntro();
         if (name === "essay") renderEssayList();
@@ -3869,58 +4040,112 @@
         if (S.results[l.id]) return '<span class="chip gold">未过关 · 最高 ' + S.results[l.id].score + "/" + S.results[l.id].total + "</span>";
         return '<span class="chip now">' + (idx === 0 || S.passed[LESSONS[idx - 1].id] ? "学这节" : "") + "</span>";
       }
+      var courseFilter = "全部";
+      var courseOpen = {};       // 模块名 -> 是否展开
+      var courseOpenInit = false;
+      var COURSE_MOD_ORDER = ["言语理解", "判断推理", "数量关系", "资料分析", "常识判断", "政治理论", "申论"];
+      function courseModules() {
+        var seen = {}, out = [], i, m;
+        for (i = 0; i < LESSONS.length; i++) seen[LESSONS[i].mod] = true;
+        for (i = 0; i < COURSE_MOD_ORDER.length; i++) if (seen[COURSE_MOD_ORDER[i]]) { out.push(COURSE_MOD_ORDER[i]); delete seen[COURSE_MOD_ORDER[i]]; }
+        for (m in seen) out.push(m);
+        return out;
+      }
+      function lessonRowHtml(l, i) {
+        var un = isUnlocked(i);
+        return '<button class="lesson-row ' + (S.passed[l.id] ? "passed" : un ? "current" : "locked") + '" data-act="open-lesson" data-arg="' + l.id + '"' + (un ? "" : " disabled") + ">" +
+          '<span class="no">' + (S.passed[l.id] ? "✓" : (i + 1)) + "</span>" +
+          '<span class="lr-main"><b>' + l.title + '</b><span class="lr-meta">' + l.mod + " · 约 " + l.mins + " 分钟 · 随堂测 5 题" + (l.real ? " · 真题" : " · 练习题") + "</span></span>" +
+          chipForLesson(l, i) + "</button>";
+      }
       function renderCourse() {
-        var html = "";
-        html += '<div class="stage"><h3>第一阶段 · 基础</h3><span class="stage-sub">' + LESSONS.length + ' 节课：先学方法，再随堂测，≥4 分过关解锁下一课</span></div>';
-        for (var i = 0; i < LESSONS.length; i++) {
-          var l = LESSONS[i], un = isUnlocked(i);
-          html += '<button class="lesson-row ' + (S.passed[l.id] ? "passed" : un ? "current" : "locked") + '" data-act="open-lesson" data-arg="' + l.id + '"' + (un ? "" : " disabled") + ">" +
-            '<span class="no">' + (S.passed[l.id] ? "✓" : (i + 1)) + "</span>" +
-            '<span class="lr-main"><b>' + l.title + '</b><span class="lr-meta">' + l.mod + " · 约 " + l.mins + " 分钟 · 随堂测 5 题" + (l.real ? " · 真题" : " · 练习题") + "</span></span>" +
-            chipForLesson(l, i) + "</button>";
+        var mods = courseModules();
+        if (courseFilter !== "全部" && mods.indexOf(courseFilter) < 0) courseFilter = "全部";
+        if (!courseOpenInit) {
+          // 默认只展开「下一课」所在的模块，其余收起，打开页面不用一口气滑到底
+          courseOpenInit = true;
+          var nextMod = null;
+          for (var n = 0; n < LESSONS.length; n++) if (!S.passed[LESSONS[n].id]) { nextMod = LESSONS[n].mod; break; }
+          for (var o = 0; o < mods.length; o++) courseOpen[mods[o]] = (mods[o] === nextMod);
         }
-        html += '<div class="stage"><h3>第二阶段 · 强化</h3><span class="stage-sub">按模块集中练，哪里弱练哪里（建议学完对应模块的基础课再练）</span></div>';
-        for (var j = 0; j < DRILLS.length; j++) {
-          var dr = DRILLS[j], rr = S.results[dr.id];
-          html += '<button class="lesson-row" data-act="open-drill" data-arg="' + dr.id + '">' +
-            '<span class="no">练</span>' +
-            '<span class="lr-main"><b>' + dr.title + '</b><span class="lr-meta">' + dr.mod + " · 5 题 · 即时讲评" + (dr.real ? " · 真题" : " · 练习题") + "</span></span>" +
-            (rr ? '<span class="chip ' + (rr.score >= PASS_LINE ? "ok" : "gold") + '">上次 ' + rr.score + "/" + rr.total + "</span>" : '<span class="chip now">去训练</span>') + "</button>";
+        var filtering = courseFilter !== "全部";
+        var html = "";
+        // 模块筛选
+        var fHtml = '<button class="wb-fbtn' + (!filtering ? " on" : "") + '" data-act="course-filter" data-arg="全部">全部模块</button>';
+        for (var f = 0; f < mods.length; f++) {
+          fHtml += '<button class="wb-fbtn' + (courseFilter === mods[f] ? " on" : "") + '" data-act="course-filter" data-arg="' + mods[f] + '">' + mods[f] + "</button>";
+        }
+        html += '<div class="course-filter">' + fHtml + "</div>";
+        html += '<div class="stage"><h3>第一阶段 · 基础</h3><span class="stage-sub">' + LESSONS.length + ' 节课按模块分组：点模块名展开 / 收起，先学方法，再随堂测，≥4 分过关解锁下一课</span></div>';
+        for (var g = 0; g < mods.length; g++) {
+          var gm = mods[g];
+          if (filtering && gm !== courseFilter) continue;
+          var gLessons = [], gPassed = 0, gi;
+          for (gi = 0; gi < LESSONS.length; gi++) if (LESSONS[gi].mod === gm) { gLessons.push(gi); if (S.passed[LESSONS[gi].id]) gPassed++; }
+          var gOpen = filtering || !!courseOpen[gm];
+          html += '<button class="group-head' + (gOpen ? " open" : "") + '" data-act="course-group" data-arg="' + gm + '" aria-expanded="' + (gOpen ? "true" : "false") + '">' +
+            '<span class="gh-name">' + gm + '</span><span class="gh-meta">' + gLessons.length + " 节课 · 已过关 " + gPassed + " 节</span>" +
+            '<span class="gh-chev">▸</span></button>';
+          html += '<div class="group-body' + (gOpen ? " open" : "") + '">';
+          for (var k = 0; k < gLessons.length; k++) html += lessonRowHtml(LESSONS[gLessons[k]], gLessons[k]);
+          html += "</div>";
+        }
+        var drillShown = false;
+        for (var j = 0; j < DRILLS.length; j++) { if (!filtering || DRILLS[j].mod === courseFilter) { drillShown = true; break; } }
+        if (drillShown) {
+          html += '<div class="stage"><h3>第二阶段 · 强化</h3><span class="stage-sub">按模块集中练，哪里弱练哪里（建议学完对应模块的基础课再练）</span></div>';
+          for (var j2 = 0; j2 < DRILLS.length; j2++) {
+            var dr = DRILLS[j2];
+            if (filtering && dr.mod !== courseFilter) continue;
+            var rr = S.results[dr.id];
+            html += '<button class="lesson-row" data-act="open-drill" data-arg="' + dr.id + '">' +
+              '<span class="no">练</span>' +
+              '<span class="lr-main"><b>' + dr.title + '</b><span class="lr-meta">' + dr.mod + " · 5 题 · 即时讲评" + (dr.real ? " · 真题" : " · 练习题") + "</span></span>" +
+              (rr ? '<span class="chip ' + (rr.score >= PASS_LINE ? "ok" : "gold") + '">上次 ' + rr.score + "/" + rr.total + "</span>" : '<span class="chip now">去训练</span>') + "</button>";
+          }
         }
         html += '<div class="stage"><h3>练习池 · 随机抽题</h3><span class="stage-sub">从全部课程和强化训练的题目里按模块随机抽 10 题，每组都不一样，练多少遍都不怕背答案</span></div>';
         for (var p = 0; p < MODS.length; p++) {
-          var pm = MODS[p], pc2 = poolItems(pm, true), pr = S.results["POOL-" + pm];
+          var pm = MODS[p];
+          if (filtering && pm !== courseFilter) continue;
+          var pc2 = poolItems(pm, true), pr = S.results["POOL-" + pm];
           html += '<button class="lesson-row" data-act="open-pool" data-arg="' + pm + '">' +
             '<span class="no">抽</span>' +
             '<span class="lr-main"><b>' + pm + ' · 随机练习</b><span class="lr-meta">题池共 ' + pc2 + ' 题 · 每次随机抽 10 题 · 即时讲评 · 6 分过关</span></span>' +
             (pr ? '<span class="chip ' + (pr.score >= 6 ? "ok" : "gold") + '">上次 ' + pr.score + "/" + pr.total + "</span>" : '<span class="chip now">去抽题</span>') + "</button>";
         }
-        html += '<div class="stage"><h3>第三阶段 · 冲刺</h3><span class="stage-sub">整套模拟，练节奏和心态</span></div>';
-        var er = S.results["EXAM"];
-        html += '<button class="lesson-row" data-act="tab" data-arg="exam">' +
-          '<span class="no">考</span>' +
-          '<span class="lr-main"><b>综合模拟考试（快速版）</b><span class="lr-meta">10 题 · 限时 15 分钟 · 六个模块混合 · 交卷后统一讲评</span></span>' +
-          (er ? '<span class="chip ' + (er.score >= EXAM.passLine ? "ok" : "gold") + '">上次 ' + er.score + "/" + er.total + " 分</span>" : '<span class="chip now">去考试</span>') + "</button>";
-        var fer = S.results["FULLEXAM"];
-        html += '<button class="lesson-row" data-act="start-fullexam">' +
-          '<span class="no">全</span>' +
-          '<span class="lr-main"><b>完整模拟考 · 行测</b><span class="lr-meta">120 题 · 限时 120 分钟 · 按真实题量组卷 · 交卷后全卷解析可回看，之后接着做申论</span></span>' +
-          (fer ? '<span class="chip ' + (fer.score >= FULL_PASS ? "ok" : "gold") + '">上次 ' + fer.score + "/" + fer.total + " 分</span>" : '<span class="chip now">去考试</span>') + "</button>";
-        html += '<div class="stage"><h3>申论写作</h3><span class="stage-sub">归纳概括、倡议书、综合分析、大作文各一道，写完对照要点自评</span></div>';
-        html += '<button class="lesson-row" data-act="tab" data-arg="essay">' +
-          '<span class="no">写</span>' +
-          '<span class="lr-main"><b>申论写作练习</b><span class="lr-meta">4 道分题型写作题 · 带参考要点、范文思路和自评打分表 · 草稿自动保存</span></span>' +
-          '<span class="chip now">去写作</span></button>';
-        html += '<div class="stage"><h3>错题本</h3><span class="stage-sub">随堂测、强化训练、练习池、模拟考里答错的题自动汇总，重做答对就移出</span></div>';
-        html += '<button class="lesson-row" data-act="tab" data-arg="wrong">' +
-          '<span class="no">错</span>' +
-          '<span class="lr-main"><b>我的错题本</b><span class="lr-meta">' + (S.wrong.length ? "点开看原题和解析，或直接重做；答对了就移出错题本" : "暂时没有错题，答错的题会自动收进来") + '</span></span>' +
-          (S.wrong.length ? '<span class="chip gold">' + S.wrong.length + ' 道待重做</span>' : '<span class="chip ok">空空如也</span>') + "</button>";
-        html += '<p class="note-line">申论的功夫一半在动笔：学完第 13、14、21、22 课后，去上面「申论写作练习」按题型完整写一篇，再对照参考要点和打分表自查。</p>';
+        if (!filtering) {
+          html += '<div class="stage"><h3>第三阶段 · 冲刺</h3><span class="stage-sub">整套模拟，练节奏和心态</span></div>';
+          var er = S.results["EXAM"];
+          html += '<button class="lesson-row" data-act="tab" data-arg="exam">' +
+            '<span class="no">考</span>' +
+            '<span class="lr-main"><b>综合模拟考试（快速版）</b><span class="lr-meta">10 题 · 限时 15 分钟 · 六个模块混合 · 交卷后统一讲评</span></span>' +
+            (er ? '<span class="chip ' + (er.score >= EXAM.passLine ? "ok" : "gold") + '">上次 ' + er.score + "/" + er.total + " 分</span>" : '<span class="chip now">去考试</span>') + "</button>";
+          var fer = S.results["FULLEXAM"];
+          html += '<button class="lesson-row" data-act="start-fullexam">' +
+            '<span class="no">全</span>' +
+            '<span class="lr-main"><b>完整模拟考 · 行测</b><span class="lr-meta">120 题 · 限时 120 分钟 · 按真实题量组卷 · 交卷后全卷解析可回看，之后接着做申论</span></span>' +
+            (fer ? '<span class="chip ' + (fer.score >= FULL_PASS ? "ok" : "gold") + '">上次 ' + fer.score + "/" + fer.total + " 分</span>" : '<span class="chip now">去考试</span>') + "</button>";
+          html += '<div class="stage"><h3>申论写作</h3><span class="stage-sub">归纳概括、倡议书、综合分析、大作文各一道，写完对照要点自评</span></div>';
+          html += '<button class="lesson-row" data-act="tab" data-arg="essay">' +
+            '<span class="no">写</span>' +
+            '<span class="lr-main"><b>申论写作练习</b><span class="lr-meta">4 道分题型写作题 · 带参考要点、范文思路和自评打分表 · 草稿自动保存</span></span>' +
+            '<span class="chip now">去写作</span></button>';
+          html += '<div class="stage"><h3>错题本</h3><span class="stage-sub">随堂测、强化训练、练习池、模拟考里答错的题自动汇总，重做答对就移出</span></div>';
+          html += '<button class="lesson-row" data-act="tab" data-arg="wrong">' +
+            '<span class="no">错</span>' +
+            '<span class="lr-main"><b>我的错题本</b><span class="lr-meta">' + (S.wrong.length ? "点开看原题和解析，或直接重做；答对了就移出错题本" : "暂时没有错题，答错的题会自动收进来") + '</span></span>' +
+            (S.wrong.length ? '<span class="chip gold">' + S.wrong.length + ' 道待重做</span>' : '<span class="chip ok">空空如也</span>') + "</button>";
+          html += '<p class="note-line">申论的功夫一半在动笔：学完第 13、14、21、22 课后，去上面「申论写作练习」按题型完整写一篇，再对照参考要点和打分表自查。</p>';
+        }
         $("courseMap").innerHTML = html;
       }
 
-      /* ================= 教学页 ================= */
+      /* ---------- 教学页 ---------- */
+      // 教学板块默认折叠，点标题展开 / 收起，打开一节课不用一口气滑到底
+      function teachBlockHtml(title, bodyHtml) {
+        return '<div class="t-block closed"><h3 class="teach-h" data-act="teach-toggle" aria-expanded="false"><span class="dot"></span>' + title + '<span class="t-chev">▸</span></h3><div class="teach-body">' + bodyHtml + "</div></div>";
+      }
       function figsHtml(q) {
         if (!q.f || !q.f.length) return "";
         var asOptions = q.f.length === q.o.length;
@@ -3950,23 +4175,24 @@
         if (l.ex2) {
           var ex2Opts = "";
           for (var k2 = 0; k2 < l.ex2.o.length; k2++) ex2Opts += "<li><b>" + LETTERS[k2] + ".</b> " + l.ex2.o[k2] + "</li>";
-          ex2Html =
-            '<div class="t-block"><h3><span class="dot"></span>例题精讲（二）</h3><p class="ex-q">' + l.ex2.s + '</p><ul style="list-style:none;padding-left:2px;">' + ex2Opts + "</ul>" +
+          ex2Html = teachBlockHtml("例题精讲（二）",
+            '<p class="ex-q">' + l.ex2.s + '</p><ul style="list-style:none;padding-left:2px;">' + ex2Opts + "</ul>" +
             '<p style="margin-top:12px;"><button class="btn ghost sm" data-act="ex-toggle" data-arg="exAnswer2">看答案与解析</button></p>' +
-            '<div class="ex-a" id="exAnswer2"><b>答案：' + LETTERS[l.ex2.a] + "。</b>" + l.ex2.w + "</div></div>";
+            '<div class="ex-a" id="exAnswer2"><b>答案：' + LETTERS[l.ex2.a] + "。</b>" + l.ex2.w + "</div>");
         }
         $("playerBody").innerHTML =
           '<div class="crumb"><button class="back" data-act="tab" data-arg="course">← 课程地图</button>' +
           '<span class="where">第 ' + (idx + 1) + " 课 / 共 " + LESSONS.length + " 课 · " + l.mod + "</span></div>" +
-          '<div class="teach"><h2>' + l.title + '</h2><div class="t-meta">建议学习 ' + l.mins + " 分钟 · 按「从零讲起 → 方法步骤 → 例题精讲」的顺序学，再做随堂测 · " + PASS_LINE + " 分过关" + (l.real ? " · 随堂测为真题（选自「没钱考什么公」题库）" : " · 随堂测为练习题") + "</div>" +
-          (introHtml ? '<div class="t-block"><h3><span class="dot"></span>从零讲起</h3>' + introHtml + "</div>" : "") +
-          '<div class="t-block"><h3><span class="dot"></span>方法步骤</h3><ol>' + mHtml + "</ol></div>" +
-          '<div class="t-block"><h3><span class="dot"></span>例题精讲（一）</h3><p class="ex-q">' + l.ex.s + '</p><ul style="list-style:none;padding-left:2px;">' + exOpts + "</ul>" +
-          '<p style="margin-top:12px;"><button class="btn ghost sm" data-act="ex-toggle">看答案与解析</button></p>' +
-          '<div class="ex-a" id="exAnswer"><b>答案：' + LETTERS[l.ex.a] + "。</b>" + l.ex.w + "</div></div>" +
+          '<div class="teach"><h2>' + l.title + '</h2><div class="t-meta">建议学习 ' + l.mins + " 分钟 · 教学分板块折叠放着，点板块标题展开，按「从零讲起 → 方法步骤 → 例题精讲」的顺序学，再做随堂测 · " + PASS_LINE + " 分过关" + (l.real ? " · 随堂测为真题（选自「没钱考什么公」题库）" : " · 随堂测为练习题") + "</div>" +
+          (introHtml ? teachBlockHtml("从零讲起", introHtml) : "") +
+          teachBlockHtml("方法步骤", "<ol>" + mHtml + "</ol>") +
+          teachBlockHtml("例题精讲（一）",
+            '<p class="ex-q">' + l.ex.s + '</p><ul style="list-style:none;padding-left:2px;">' + exOpts + "</ul>" +
+            '<p style="margin-top:12px;"><button class="btn ghost sm" data-act="ex-toggle">看答案与解析</button></p>' +
+            '<div class="ex-a" id="exAnswer"><b>答案：' + LETTERS[l.ex.a] + "。</b>" + l.ex.w + "</div>") +
           ex2Html +
-          '<div class="t-block"><h3><span class="dot"></span>易错点</h3><ul>' + tHtml + "</ul></div>" +
-          (l.sum ? '<div class="t-block"><h3><span class="dot"></span>本课小结</h3><p>' + l.sum + "</p></div>" : "") +
+          teachBlockHtml("易错点", "<ul>" + tHtml + "</ul>") +
+          (l.sum ? teachBlockHtml("本课小结", "<p>" + l.sum + "</p>") : "") +
           '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;">' +
           '<button class="btn accent" data-act="start-lesson-quiz" data-arg="' + l.id + '">开始随堂测（5 题）</button>' +
           (S.passed[l.id] ? '<span class="chip ok" style="align-self:center;">✓ 本课已过关，重测可刷新成绩</span>' : "") +
@@ -3979,6 +4205,7 @@
       function startQuiz(cfg) {
         Q = {
           kind: cfg.kind, id: cfg.id, title: cfg.title, mod: cfg.mod || null,
+          bankKey: cfg.bankKey || null,
           items: cfg.items, data: cfg.data || null, idx: 0,
           picked: [], revealed: [], score: 0,
           mode: cfg.mode, seconds: cfg.seconds || 0, timerId: null,
@@ -4194,6 +4421,10 @@
           acts += '<button class="btn accent" data-act="pool-again" data-arg="' + Q.mod + '">再抽一组（10 题）</button>';
           acts += '<button class="btn" data-act="tab" data-arg="eval">看学习评价</button>';
           acts += '<button class="btn ghost" data-act="tab" data-arg="course">课程地图</button>';
+        } else if (Q.kind === "bank") {
+          acts += '<button class="btn accent" data-act="bank-again" data-arg="' + (Q.bankKey || "") + '">再抽一组（10 题）</button>';
+          acts += '<button class="btn" data-act="tab" data-arg="bank">回题库选题</button>';
+          acts += '<button class="btn ghost" data-act="tab" data-arg="eval">看学习评价</button>';
         } else {
           acts += '<button class="btn accent" data-act="requiz">再练一次</button>';
           acts += '<button class="btn ghost" data-act="tab" data-arg="course">课程地图</button>';
@@ -4549,96 +4780,19 @@ if (note) note.textContent = "已保存：自评 " + sum + " / " + st.max + " �
         showView("player");
       }
 
-      /* ================= 云端同步（Supabase，可选） ================= */
-      var SUPA_LS = "shangan-supa-v1";
-      var supaCfg = null, syncTimer = null, applyingRemote = false, lastSyncMsg = "";
-      (function loadSupaCfg() {
-        try { var c = JSON.parse(localStorage.getItem(SUPA_LS)); if (c && c.url && c.key) supaCfg = c; } catch (e) { supaCfg = null; }
-      })();
-      function setSyncStatus(msg, cls) {
-        lastSyncMsg = msg;
-        var el = $("syncStatus");
-        if (el) { el.textContent = msg; el.className = "sync-status" + (cls ? " " + cls : ""); }
-      }
-      function supaBase() { return supaCfg.url.replace(/\/+$/, "") + "/rest/v1/study_sync"; }
-      function supaHead(extra) {
-        var h = { "apikey": supaCfg.key, "Authorization": "Bearer " + supaCfg.key, "Content-Type": "application/json" };
-        if (extra) for (var k in extra) h[k] = extra[k];
-        return h;
-      }
-      function scheduleSync() {
-        if (!supaCfg || applyingRemote) return;
-        if (syncTimer) clearTimeout(syncTimer);
-        syncTimer = setTimeout(function () { syncUpload(false); }, 4000);
-      }
-      function syncUpload(manual) {
-        if (!supaCfg) { if (manual) setSyncStatus("还没有填写 Supabase 配置，先填好地址和 anon key 再同步。", "bad"); return; }
-        fetch(supaBase(), {
-          method: "POST",
-          headers: supaHead({ "Prefer": "resolution=merge-duplicates" }),
-          body: JSON.stringify([{ id: "main", payload: snapshotState(), updated_at: new Date().toISOString() }])
-        }).then(function (r) {
-          if (!r.ok) throw new Error("HTTP " + r.status);
-          setSyncStatus("已同步到云端 · " + new Date().toLocaleTimeString(), "ok");
-        }).catch(function (e) {
-          setSyncStatus("同步失败（" + e.message + "）。请检查地址、anon key 是否填对，以及 study_sync 表和策略是否已建好；本地进度不受影响。", "bad");
-        });
-      }
-      function syncDownload() {
-        if (!supaCfg) { setSyncStatus("还没有填写 Supabase 配置。", "bad"); return; }
-        setSyncStatus("正在从云端读取……");
-        fetch(supaBase() + "?id=eq.main&select=payload,updated_at", { headers: supaHead() }).then(function (r) {
-          if (!r.ok) throw new Error("HTTP " + r.status);
-          return r.json();
-        }).then(function (rows) {
-          if (!rows || !rows.length || !rows[0].payload) { setSyncStatus("云端还没有数据。先点「上传进度到云端」，把这台设备的进度传上去。", "bad"); return; }
-          applyingRemote = true;
-          applyState(rows[0].payload);
-          saveState();
-          applyingRemote = false;
-          renderStatus(); renderToday(); renderCourse(); renderExamIntro(); renderWrong(); renderEssayList(); renderSettings();
-          setSyncStatus("已从云端恢复进度（云端更新时间 " + (rows[0].updated_at || "") + "）。本机显示已刷新。", "ok");
-        }).catch(function (e) {
-          applyingRemote = false;
-          setSyncStatus("读取失败（" + e.message + "）。请检查配置与网络；本地进度不受影响。", "bad");
-        });
-      }
-      function supaTest() {
-        if (!supaCfg) { setSyncStatus("请先填写并保存配置。", "bad"); return; }
-        setSyncStatus("正在测试连接……");
-        fetch(supaBase() + "?id=eq.main&select=id", { headers: supaHead() }).then(function (r) {
-          if (!r.ok) throw new Error("HTTP " + r.status);
-          setSyncStatus("连接成功，study_sync 表可访问。可以点「上传进度到云端」做第一次同步。", "ok");
-        }).catch(function (e) {
-          setSyncStatus("连接失败（" + e.message + "）。常见原因：地址或 anon key 填错、表还没建、或没给 anon 角色建放行策略（见下方 SQL）。", "bad");
-        });
-      }
-      var SYNC_SQL = "create table if not exists public.study_sync (\n  id text primary key,\n  payload jsonb not null,\n  updated_at timestamptz not null default now()\n);\nalter table public.study_sync enable row level security;\ncreate policy \"study_sync_select\" on public.study_sync for select using (true);\ncreate policy \"study_sync_insert\" on public.study_sync for insert with check (true);\ncreate policy \"study_sync_update\" on public.study_sync for update using (true) with check (true);";
+      /* ================= 设置（本地进度 · 离线 · 备份） ================= */
       function renderSettings() {
         var body = $("settingsBody");
         if (!body) return;
-        var cfg = supaCfg || { url: "", key: "" };
         body.innerHTML =
-          '<div class="card"><h3>云端同步（你自己的 Supabase）</h3>' +
-          '<p class="set-note">不填就只存这台设备，功能完全不受影响。填好后，每次学习进度变化会自动上传（停顿几秒后），也可以手动上传或从云端恢复。地址在 Supabase 项目的 Settings → API 里：Project URL 和 anon public key。</p>' +
-          '<div class="fld"><label for="supaUrl">Supabase 地址（Project URL）</label><input id="supaUrl" type="url" placeholder="https://xxxx.supabase.co" value="' + String(cfg.url).replace(/"/g, "&quot;") + '" autocomplete="off" /></div>' +
-          '<div class="fld"><label for="supaKey">anon key（anon public）</label><input id="supaKey" type="text" placeholder="eyJhbGciOi…" value="' + String(cfg.key).replace(/"/g, "&quot;") + '" autocomplete="off" /></div>' +
-          '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;">' +
-          '<button class="btn" data-act="supa-save">保存配置并测试连接</button>' +
-          '<button class="btn accent" data-act="supa-upload">上传进度到云端</button>' +
-          '<button class="btn ghost" data-act="supa-download">从云端恢复</button>' +
-          (supaCfg ? '<button class="btn ghost" data-act="supa-clear">清除配置（改回只存本地）</button>' : "") +
-          "</div>" +
-          '<div class="sync-status" id="syncStatus">' + (lastSyncMsg || (supaCfg ? "已配置云端同步。进度变化后会自动上传，也可以手动点上面的按钮。" : "当前未配置，只保存在这台设备上。")) + "</div>" +
-          '<p class="set-note" style="margin-top:14px;">第一次使用前，需要在你的 Supabase 项目里跑一次下面的 SQL 建一张同步表（SQL Editor 里粘贴运行即可）。说明：anon key 是公开钥匙，这组策略允许持有该 key 的人读写这一张表——它只存你自己的学习进度，但不要把 key 发给别人；介意的话同步完可以随时清除配置。</p>' +
-          '<div class="sql-box" id="syncSql">' + SYNC_SQL.replace(/</g, "&lt;") + "</div>" +
-          '<div style="margin-top:10px;"><button class="btn ghost sm" data-act="supa-copy-sql">复制这段 SQL</button></div></div>' +
+          '<div class="card"><h3>本地进度</h3>' +
+          '<p class="set-note">进度、成绩、错题本、打卡和申论草稿都保存在这台设备的浏览器里，关掉页面再打开不会丢。不绑账号；清除浏览器数据或更换设备后记录无法恢复，想跨设备保存请用下面的进度备份导出 / 导入。</p></div>' +
           '<div class="card" style="margin-top:16px;"><h3>离线使用</h3>' +
           '<p class="set-note">本页的全部课程、题目和解析都内置在这一个文件里，不从网上加载内容：断网时只要页面还开着，就能照常刷题、看教学、看错题，进度照常保存在本机。想在没网时也能重新打开本页，点下面按钮把离线文件存到手机的「文件」里，之后没网时打开这个文件即可（离线文件里的进度单独保存在文件打开的环境中，与在线版不互通）。</p>' +
           '<div style="display:flex;gap:10px;flex-wrap:wrap;"><button class="btn" data-act="offline-download">下载离线文件</button></div>' +
           '<p class="set-note" id="netState" style="margin-top:10px;">当前网络状态：' + (navigator.onLine ? "在线" : "离线") + "</p></div>" +
           '<div class="card" style="margin-top:16px;"><h3>数据备份</h3>' +
-          '<p class="set-note">把全部进度（过关、成绩、错题本、打卡、申论草稿与自评）导出成一个 JSON 文件保存；换设备或清了浏览器数据后，可以在这里导入恢复。与云端同步二选一即可，也可以都用。</p>' +
+          '<p class="set-note">把全部进度（过关、成绩、错题本、打卡、申论草稿与自评）导出成一个 JSON 文件保存；换设备或清了浏览器数据后，可以在这里导入恢复。</p>' +
           '<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">' +
           '<button class="btn" data-act="export-json">导出进度（JSON）</button>' +
           '<label class="btn ghost" style="display:inline-flex;align-items:center;cursor:pointer;">导入进度<input type="file" id="importFile" accept="application/json,.json" style="display:none;" /></label>' +
@@ -4652,14 +4806,11 @@ if (note) note.textContent = "已保存：自评 " + sum + " / " + st.max + " �
           rd.onload = function () {
             try {
               var d = JSON.parse(rd.result);
-              applyingRemote = true;
               applyState(d);
               saveState();
-              applyingRemote = false;
               renderStatus(); renderToday(); renderCourse(); renderExamIntro(); renderWrong(); renderEssayList(); renderSettings();
               var bn = $("backupNote"); if (bn) bn.textContent = "导入完成，进度已恢复并刷新显示。";
             } catch (e) {
-              applyingRemote = false;
               var bn2 = $("backupNote"); if (bn2) bn2.textContent = "导入失败：这个文件不是有效的进度备份。";
             }
           };
@@ -4690,14 +4841,13 @@ if (note) note.textContent = "已保存：自评 " + sum + " / " + st.max + " �
         if (ns) ns.textContent = "当前网络状态：" + (navigator.onLine ? "在线" : "离线");
       }
 
-      /* ================= 状态快照（本地保存 / 云端同步 / 备份共用） ================= */
+      /* ================= 状态快照（本地保存 / 备份共用） ================= */
       function snapshotState() {
         return {
           passed: S.passed, results: S.results, log: S.log, examReview: S.examReview,
           fullExamReview: S.fullExamReview, wrong: S.wrong, essays: S.essays,
           flags: S.flags, checkedIn: S.checkedIn,
-          day: todayKey(), checkins: checkinDates,
-          studySec: (typeof studySec === "number" ? studySec : savedStudySec)
+          day: todayKey(), checkins: checkinDates
         };
       }
       function applyState(d) {
@@ -4713,23 +4863,9 @@ if (note) note.textContent = "已保存：自评 " + sum + " / " + st.max + " �
         if (d.day === todayKey()) {
           if (d.flags) S.flags = d.flags;
           S.checkedIn = !!d.checkedIn;
-          savedStudySec = d.studySec || 0;
         }
         if (checkinDates[todayKey()]) S.checkedIn = true;
       }
-      /* ================= 学习计时 ================= */
-      var studySec = 0, studyRun = false, studyInt = null;
-      function fmtStudy(s) {
-        var h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), ss = s % 60;
-        function p(n) { return (n < 10 ? "0" : "") + n; }
-        return h > 0 ? h + ":" + p(m) + ":" + p(ss) : p(m) + ":" + p(ss);
-      }
-      function tickStudy() {
-        studySec++;
-        $("studyTimer").textContent = fmtStudy(studySec);
-        if (studySec % 15 === 0) saveState();
-      }
-
       /* ================= 全局点击分发 ================= */
       document.addEventListener("click", function (e) {
         var t = e.target.closest("[data-act]");
@@ -4763,6 +4899,17 @@ if (note) note.textContent = "已保存：自评 " + sum + " / " + st.max + " �
           }
         }
         else if (act === "open-pool" || act === "pool-again") startPool(arg);
+        else if (act === "bank-start" || act === "bank-again") startBankQuiz(arg);
+        else if (act === "course-filter") { courseFilter = arg; renderCourse(); }
+        else if (act === "course-group") { courseOpen[arg] = !courseOpen[arg]; renderCourse(); }
+        else if (act === "teach-toggle") {
+          var blk = t.closest(".t-block");
+          if (blk) {
+            var nowClosed = blk.classList.toggle("closed");
+            blk.classList.toggle("open", !nowClosed);
+            t.setAttribute("aria-expanded", nowClosed ? "false" : "true");
+          }
+        }
         else if (act === "wrong-filter") { wrongFilter = arg; renderWrong(); }
         else if (act === "wrong-toggle") {
           var wd = $("wbD-" + arg);
@@ -4778,28 +4925,6 @@ if (note) note.textContent = "已保存：自评 " + sum + " / " + st.max + " �
         else if (act === "open-essay") openEssay(arg);
         else if (act === "essay-toggle-ref") { var rf = $("essayRef"); if (rf) { var on = rf.classList.toggle("show"); t.textContent = on ? "收起参考要点与范文思路" : "看参考要点与范文思路"; } }
         else if (act === "essay-save-score") saveEssayScore();
-        else if (act === "supa-save") {
-          var u = ($("supaUrl").value || "").trim(), k2 = ($("supaKey").value || "").trim();
-          if (!u || !k2) { setSyncStatus("地址和 anon key 都要填。", "bad"); }
-          else {
-            supaCfg = { url: u, key: k2 };
-            try { localStorage.setItem(SUPA_LS, JSON.stringify(supaCfg)); } catch (e) {}
-            supaTest();
-          }
-        }
-        else if (act === "supa-upload") syncUpload(true);
-        else if (act === "supa-download") syncDownload();
-        else if (act === "supa-clear") {
-          supaCfg = null;
-          try { localStorage.removeItem(SUPA_LS); } catch (e) {}
-          renderSettings();
-          setSyncStatus("已清除配置，之后只保存在这台设备上。云端已有的数据不会被删除。", "");
-        }
-        else if (act === "supa-copy-sql") {
-          var done = function () { t.textContent = "已复制，去 Supabase 的 SQL Editor 粘贴运行"; setTimeout(function () { t.textContent = "复制这段 SQL"; }, 2600); };
-          if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(SYNC_SQL).then(done, done);
-          else done();
-        }
         else if (act === "offline-download") downloadOffline();
         else if (act === "export-json") downloadFile("上岸计划-进度备份.json", JSON.stringify(snapshotState(), null, 2), "application/json;charset=utf-8");
       });
@@ -4820,16 +4945,6 @@ if (note) note.textContent = "已保存：自评 " + sum + " / " + st.max + " �
       for (var tb = 0; tb < tabBtns.length; tb++) {
         tabBtns[tb].addEventListener("click", function () { showView(this.getAttribute("data-view")); });
       }
-      $("timerToggle").addEventListener("click", function () {
-        if (studyRun) { clearInterval(studyInt); studyRun = false; this.textContent = "继续计时"; saveState(); }
-        else { studyInt = setInterval(tickStudy, 1000); studyRun = true; this.textContent = "暂停"; }
-      });
-      $("timerReset").addEventListener("click", function () {
-        clearInterval(studyInt); studyRun = false; studySec = 0;
-        $("studyTimer").textContent = "00:00";
-        $("timerToggle").textContent = "开始计时";
-        saveState();
-      });
       $("checkinBtn").addEventListener("click", function () {
         if (S.checkedIn || !studiedToday()) return;
         S.checkedIn = true;
@@ -4840,8 +4955,6 @@ if (note) note.textContent = "已保存：自评 " + sum + " / " + st.max + " �
       });
 
       /* ================= 初始化 ================= */
-      studySec = savedStudySec;
-      $("studyTimer").textContent = fmtStudy(studySec);
       renderStatus();
       renderToday();
       renderCourse();
