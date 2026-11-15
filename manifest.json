@@ -18,7 +18,7 @@
    ]
   },
   "logic": {
-   "count": 16131,
+   "count": 15032,
    "chunks": [
     "logic-001.json",
     "logic-002.json",
@@ -35,8 +35,7 @@
     "logic-013.json",
     "logic-014.json",
     "logic-015.json",
-    "logic-016.json",
-    "logic-017.json"
+    "logic-016.json"
    ]
   },
   "math": {
@@ -48,10 +47,11 @@
    ]
   },
   "common": {
-   "count": 1106,
+   "count": 2205,
    "chunks": [
     "common-001.json",
-    "common-002.json"
+    "common-002.json",
+    "common-003.json"
    ]
   },
   "politics": {
