@@ -194,17 +194,6 @@
       .t-block.open .t-chev{ transform:rotate(90deg); }
       @media (prefers-reduced-motion: reduce){ .t-block .t-chev{ transition:none; } }
 
-      /* ---------- question bank ---------- */
-      .bank-row{
-        display:flex; gap:14px; align-items:center; width:100%; text-align:left;
-        background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
-        padding:14px 16px; margin-top:10px; box-shadow:var(--shadow); color:var(--ink);
-      }
-      .bank-row .lr-main{ flex:1; min-width:0; }
-      .bank-row .lr-main b{ font-size:16px; display:block; }
-      .bank-row .lr-meta{ font-size:13px; color:var(--muted); margin-top:2px; }
-      .bank-msg{ margin-top:14px; }
-
       /* ---------- lesson player ---------- */
       .crumb{ display:flex; align-items:center; gap:10px; margin-bottom:14px; flex-wrap:wrap; }
       .crumb .back{ border:1px solid var(--line); background:var(--surface); color:var(--ink); border-radius:9px; padding:8px 14px; font-weight:700; min-height:42px; }
@@ -440,7 +429,6 @@
       <nav class="tabs" role="tablist" aria-label="学习系统导航">
         <button role="tab" id="tabBtn-today" aria-selected="true" data-view="today">今日学习</button>
         <button role="tab" id="tabBtn-course" aria-selected="false" data-view="course">课程地图</button>
-        <button role="tab" id="tabBtn-bank" aria-selected="false" data-view="bank">题库刷题</button>
         <button role="tab" id="tabBtn-eval" aria-selected="false" data-view="eval">学习评价</button>
         <button role="tab" id="tabBtn-exam" aria-selected="false" data-view="exam">模拟考试</button>
         <button role="tab" id="tabBtn-essay" aria-selected="false" data-view="essay">申论写作</button>
@@ -504,15 +492,6 @@
         <div id="courseMap"></div>
       </section>
 
-      <!-- ============ QUESTION BANK ============ -->
-      <section class="view" id="view-bank">
-        <div class="sec-head">
-          <h2>题库刷题</h2>
-          <span class="sub">「没钱考什么公」行测题库 · 只收有解析的题 · 按模块随机抽 10 题一组</span>
-        </div>
-        <div id="bankBody"></div>
-      </section>
-
       <!-- ============ EVAL ============ -->
       <section class="view" id="view-eval">
         <div class="sec-head">
@@ -565,7 +544,6 @@
 
       <p class="foot-note">
         全系统共 22 节基础课、7 组强化训练和 1 套模拟考试，合计 155 道题，另有按模块随机抽题的练习池可反复练习。第 1 至 14 课中，言语、判断、数量、常识各课及对应强化训练、模拟考试的大部分题目为历年真题，选自「没钱考什么公」题库，解析末尾标注了来源；图形推理、资料分析、申论三部分因原题依赖图片与材料文本（题库中的材料文本已损坏），采用按真题题型编写的练习题。新增的第 15 至 22 课和申论、常识强化训练（二）同样为按真题题型编写的练习题，页面上均有标注。<br />
-        「题库刷题」页签是「没钱考什么公」的行测真题库：言语、判断、数量、常识、政治五个模块共 30,932 道，只收有解析的题，按模块随机抽 10 题一组，答错同样进错题本。题库数据文件（manifest.json 与各模块分块文件）和本页放在同一目录，打开题库时按需加载对应模块，第一次加载需要联网。<br />
         完整模拟考的行测 120 题按河南省考真实考试的模块题量（常识 20、言语 35、数量 15、判断 30、资料 20）从全系统题库组卷，并补充了按真题题型编写的练习题补足题量；申论部分为写作题，写完对照参考要点和范文思路自评打分。申论写作页另有 4 道分题型写作练习。<br />
         学习进度、成绩、错题记录与打卡记录保存在这台设备的浏览器里，关掉页面再打开不会丢；在 Safari 里把本页添加到主屏幕，之后从桌面图标打开即可。不绑账号；清除浏览器数据或更换设备后记录无法恢复，想跨设备保存可在「设置」里导出进度 JSON 备份，再在新设备上导入恢复。本页全部内容都内置在这一个文件里，断网时只要页面还开着就能继续学；「设置」里还能下载一份离线文件，没网时打开文件即可使用。
       </p>
@@ -3668,161 +3646,26 @@
         currentTab = "course";
         startQuiz({ kind: "pool", id: "POOL-" + mod, title: mod + " · 随机练习", mod: mod, items: items, mode: "instant" });
       }
-      /* ================= 题库刷题（题库文件与本页同目录，按需加载） ================= */
-      // manifest.json 记各模块题数与分块清单；分块文件如 verbal-001.json（相对路径）
-      // 每题字段：id、s 题干、o 选项数组、a 正确选项下标、w 解析。资料分析不做（无可用材料文本）
-      var BANK_DEFS = [
-        { key: "verbal", name: "言语理解", chunks: 12, total: 11248 },
-        { key: "logic", name: "判断推理", chunks: 17, total: 16153 },
-        { key: "math", name: "数量关系", chunks: 3, total: 2224 },
-        { key: "common", name: "常识判断", chunks: 2, total: 1084 },
-        { key: "politics", name: "政治理论", chunks: 1, total: 223 }
-      ];
-      var bankMods = null;   // [{key,name,files:[...],total}]，读 manifest 后生成，读不到用内置清单
-      var bankTried = false;
-      var bankCache = {};    // 模块 key -> {file, items}，只缓存该模块最近加载的一个分块
-      var bankBusy = {};     // 模块 key -> 正在加载
-      var bankErr = {};      // 模块 key -> 错误提示
-      function bankPad(n) { return (n < 10 ? "00" : n < 100 ? "0" : "") + n; }
-      function bankNameFor(key) {
-        for (var i = 0; i < BANK_DEFS.length; i++) if (BANK_DEFS[i].key === key) return BANK_DEFS[i].name;
-        return key;
-      }
-      function bankFallbackMods() {
-        var out = [];
-        for (var i = 0; i < BANK_DEFS.length; i++) {
-          var d = BANK_DEFS[i], files = [];
-          for (var c = 1; c <= d.chunks; c++) files.push(d.key + "-" + bankPad(c) + ".json");
-          out.push({ key: d.key, name: d.name, files: files, total: d.total });
-        }
-        return out;
-      }
-      // 兼容几种 manifest 写法：{key:{count,chunks:[...]}}、{key:[文件名,...]}、{modules:[{key,files,...}]}
-      function bankParseManifest(mf) {
-        var out = [], i, k;
-        function filesOf(info, key) {
-          var files = [], total = 0, list = null, j, it;
-          if (Array.isArray(info)) list = info;
-          else if (info && typeof info === "object") {
-            total = info.count || info.total || info.num || 0;
-            list = info.chunks || info.files || info.parts || null;
-            if (!list && info.chunkCount) for (j = 1; j <= info.chunkCount; j++) files.push(key + "-" + bankPad(j) + ".json");
-          }
-          if (list) for (j = 0; j < list.length; j++) {
-            it = list[j];
-            if (typeof it === "string") files.push(it);
-            else if (it && (it.file || it.name)) files.push(it.file || it.name);
-          }
-          return { files: files, total: total };
-        }
-        var src = null;
-        if (Array.isArray(mf)) src = mf;
-        else if (mf && typeof mf === "object") src = mf.modules || mf;
-        if (Array.isArray(src)) {
-          for (i = 0; i < src.length; i++) {
-            var it2 = src[i];
-            if (!it2 || typeof it2 !== "object") continue;
-            var key = it2.key || it2.module || it2.id;
-            if (!key) continue;
-            var r = filesOf(it2, key);
-            if (r.files.length) out.push({ key: key, name: it2.name || bankNameFor(key), files: r.files, total: r.total || it2.count || it2.total || 0 });
-          }
-        } else if (src && typeof src === "object") {
-          for (k in src) {
-            if (k === "total" || k === "version" || k === "generated") continue;
-            var r2 = filesOf(src[k], k);
-            if (r2.files.length) out.push({ key: k, name: bankNameFor(k), files: r2.files, total: r2.total });
+      /* ---------- 随堂测：不固定题目 ---------- */
+      /* 每课随堂测从“本课 + 同模块已学过的课”里随机抽 5 道，题目每次都不同，避免背答案；
+         只取 LESSONS 顺序里排在本课及之前的同模块课，不会考到还没学的内容。 */
+      function lessonQuizItems(lesson) {
+        var idx = -1, i, j, q, src, all = [];
+        for (i = 0; i < LESSONS.length; i++) if (LESSONS[i].id === lesson.id) { idx = i; break; }
+        if (idx < 0) return lesson.quiz.slice();
+        for (i = 0; i <= idx; i++) {
+          if (LESSONS[i].mod !== lesson.mod) continue;
+          src = LESSONS[i];
+          for (j = 0; j < src.quiz.length; j++) {
+            q = src.quiz[j];
+            all.push({ s: q.s, o: q.o, a: q.a, w: q.w, f: q.f || null, d: q.d || src.data || null });
           }
         }
-        var order = {};
-        for (i = 0; i < BANK_DEFS.length; i++) order[BANK_DEFS[i].key] = i;
-        out.sort(function (a, b) { return (order[a.key] === undefined ? 99 : order[a.key]) - (order[b.key] === undefined ? 99 : order[b.key]); });
-        for (i = 0; i < out.length; i++) {
-          if (!out[i].total) for (var di = 0; di < BANK_DEFS.length; di++) if (BANK_DEFS[di].key === out[i].key) out[i].total = BANK_DEFS[di].total;
+        for (i = all.length - 1; i > 0; i--) { // Fisher-Yates 洗牌，题目和顺序每次都不同
+          j = Math.floor(Math.random() * (i + 1));
+          var tmp = all[i]; all[i] = all[j]; all[j] = tmp;
         }
-        return out;
-      }
-      function bankEnsureManifest(done) {
-        if (bankMods) { done(); return; }
-        if (bankTried) { bankMods = bankFallbackMods(); done(); return; }
-        bankTried = true;
-        fetch("manifest.json").then(function (r) {
-          if (!r.ok) throw new Error("manifest " + r.status);
-          return r.json();
-        }).then(function (mf) {
-          var parsed = bankParseManifest(mf);
-          bankMods = parsed.length ? parsed : bankFallbackMods();
-          done();
-        }).catch(function () {
-          bankMods = bankFallbackMods();
-          done();
-        });
-      }
-      function bankEsc(t) {
-        return String(t == null ? "" : t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-      }
-      function renderBank() {
-        bankEnsureManifest(function () {
-          if (currentTab === "bank" && !$("view-player").classList.contains("on")) renderBankList();
-        });
-        renderBankList();
-      }
-      function renderBankList() {
-        var mods = bankMods || bankFallbackMods();
-        var html = '<div class="card"><h3>选一个模块，随机抽 10 题</h3>' +
-          '<p style="color:var(--muted);font-size:14.5px;margin:0;">点选作答、即时判分，每题都带解析；答错的题自动进错题本，成绩计入学习评价。每个模块第一次抽题时要加载题库分块文件，需要联网。</p></div>';
-        for (var i = 0; i < mods.length; i++) {
-          var m = mods[i], r = S.results["BANK-" + m.key], busy = !!bankBusy[m.key];
-          html += '<div class="bank-row"><span class="lr-main"><b>' + m.name + '</b><span class="lr-meta">共 ' + (m.total || "—") + ' 道有解析的题 · 随机抽 10 题一组 · 6 分过关</span></span>' +
-            (r ? '<span class="chip ' + (r.score >= 6 ? "ok" : "gold") + '">上次 ' + r.score + "/" + r.total + "</span>" : "") +
-            '<button class="btn' + (busy ? "" : " accent") + '" data-act="bank-start" data-arg="' + m.key + '"' + (busy ? " disabled" : "") + ">" + (busy ? "加载中…" : "抽 10 题") + "</button></div>";
-          if (bankErr[m.key]) html += '<div class="advice bank-msg">' + bankErr[m.key] + ' <button class="btn ghost sm" data-act="bank-start" data-arg="' + m.key + '">重试</button></div>';
-        }
-        $("bankBody").innerHTML = html;
-      }
-      function startBankQuiz(key) {
-        if (bankBusy[key]) return;
-        bankEnsureManifest(function () { bankLoadAndStart(key); });
-      }
-      function bankLoadAndStart(key) {
-        var mods = bankMods || bankFallbackMods(), mod = null, i;
-        for (i = 0; i < mods.length; i++) if (mods[i].key === key) mod = mods[i];
-        if (!mod || !mod.files.length) return;
-        function go(items) {
-          var pool = items.slice(), a, b, t;
-          for (a = pool.length - 1; a > 0; a--) { b = Math.floor(Math.random() * (a + 1)); t = pool[a]; pool[a] = pool[b]; pool[b] = t; }
-          var qs = [];
-          for (var j = 0; j < pool.length && qs.length < 10; j++) {
-            var q = pool[j];
-            if (!q || !q.o || q.o.length !== 4 || typeof q.a !== "number" || q.a < 0 || q.a >= q.o.length) continue;
-            var opts = [];
-            for (var oi = 0; oi < q.o.length; oi++) opts.push(bankEsc(q.o[oi]));
-            qs.push({ s: bankEsc(q.s), o: opts, a: q.a, w: bankEsc(q.w), mod: mod.name });
-          }
-          if (!qs.length) { bankErr[key] = "这个分块里没读到可用题目，再抽一次试试。"; if (currentTab === "bank") renderBankList(); return; }
-          currentTab = "bank";
-          startQuiz({ kind: "bank", id: "BANK-" + key, bankKey: key, title: mod.name + " · 题库刷题", mod: mod.name, items: qs, mode: "instant" });
-        }
-        var cached = bankCache[key];
-        // 已缓存的分块半数概率直接复用（省流量），否则随机换一个分块加载，保证题目新鲜
-        if (cached && cached.items.length >= 10 && Math.random() < 0.5) { go(cached.items); return; }
-        var file = mod.files[Math.floor(Math.random() * mod.files.length)];
-        if (cached && cached.file === file) { go(cached.items); return; }
-        bankBusy[key] = true; bankErr[key] = null;
-        if (currentTab === "bank") renderBankList();
-        fetch(file).then(function (r) {
-          if (!r.ok) throw new Error("chunk " + r.status);
-          return r.json();
-        }).then(function (data) {
-          bankBusy[key] = false;
-          var items = Array.isArray(data) ? data : (data && (data.questions || data.items || data.list)) || [];
-          bankCache[key] = { file: file, items: items };
-          go(items);
-        }).catch(function () {
-          bankBusy[key] = false;
-          bankErr[key] = "题库文件 " + file + " 加载失败（多半是没联网，或文件还没传到本题库目录）。";
-          if (currentTab === "bank") renderBankList();
-        });
+        return all.slice(0, 5);
       }
 
       /* ================= 错题本 ================= */
@@ -3933,19 +3776,18 @@
       var currentTab = "today";
       function showView(name) {
         if (Q && Q.timerId) { clearInterval(Q.timerId); Q.timerId = null; }
-        var views = ["today", "course", "bank", "eval", "exam", "essay", "wrong", "settings", "player"];
+        var views = ["today", "course", "eval", "exam", "essay", "wrong", "settings", "player"];
         for (var i = 0; i < views.length; i++) {
           $("view-" + views[i]).classList.toggle("on", views[i] === name);
         }
         var tabFor = name === "player" ? currentTab : name;
-        var tabs = ["today", "course", "bank", "eval", "exam", "essay", "wrong", "settings"];
+        var tabs = ["today", "course", "eval", "exam", "essay", "wrong", "settings"];
         for (var j = 0; j < tabs.length; j++) {
           $("tabBtn-" + tabs[j]).setAttribute("aria-selected", tabs[j] === tabFor ? "true" : "false");
         }
         if (name !== "player") currentTab = name;
         if (name === "today") renderToday();
         if (name === "course") renderCourse();
-        if (name === "bank") renderBank();
         if (name === "eval") { renderEval(); if (S.log.length) { S.flags.reviewed = true; saveState(); renderToday(); } }
         if (name === "exam") renderExamIntro();
         if (name === "essay") renderEssayList();
@@ -4206,7 +4048,6 @@
       function startQuiz(cfg) {
         Q = {
           kind: cfg.kind, id: cfg.id, title: cfg.title, mod: cfg.mod || null,
-          bankKey: cfg.bankKey || null,
           items: cfg.items, data: cfg.data || null, idx: 0,
           picked: [], revealed: [], score: 0,
           mode: cfg.mode, seconds: cfg.seconds || 0, timerId: null,
@@ -4422,10 +4263,6 @@
           acts += '<button class="btn accent" data-act="pool-again" data-arg="' + Q.mod + '">再抽一组（10 题）</button>';
           acts += '<button class="btn" data-act="tab" data-arg="eval">看学习评价</button>';
           acts += '<button class="btn ghost" data-act="tab" data-arg="course">课程地图</button>';
-        } else if (Q.kind === "bank") {
-          acts += '<button class="btn accent" data-act="bank-again" data-arg="' + (Q.bankKey || "") + '">再抽一组（10 题）</button>';
-          acts += '<button class="btn" data-act="tab" data-arg="bank">回题库选题</button>';
-          acts += '<button class="btn ghost" data-act="tab" data-arg="eval">看学习评价</button>';
         } else {
           acts += '<button class="btn accent" data-act="requiz">再练一次</button>';
           acts += '<button class="btn ghost" data-act="tab" data-arg="course">课程地图</button>';
@@ -4880,7 +4717,7 @@ if (note) note.textContent = "已保存：自评 " + sum + " / " + st.max + " �
         }
         else if (act === "start-lesson-quiz") {
           var l = lessonById(arg);
-          if (l) startQuiz({ kind: "lesson", id: l.id, title: l.title + " · 随堂测", mod: l.mod, items: l.quiz, data: l.data || null, mode: "instant" });
+          if (l) startQuiz({ kind: "lesson", id: l.id, title: l.title + " · 随堂测", mod: l.mod, items: lessonQuizItems(l), data: l.data || null, mode: "instant" });
         }
         else if (act === "ex-toggle") { var ex = $(arg || "exAnswer"); if (ex) ex.classList.add("show"); t.style.display = "none"; }
         else if (act === "opt") chooseOption(parseInt(arg, 10));
@@ -4895,12 +4732,11 @@ if (note) note.textContent = "已保存：自评 " + sum + " / " + st.max + " �
             var found = null, i;
             for (i = 0; i < LESSONS.length; i++) if ((LESSONS[i].title + " · 随堂测") === last.name) found = { kind: "lesson", lesson: LESSONS[i] };
             if (!found) for (i = 0; i < DRILLS.length; i++) if (DRILLS[i].title === last.name) found = { kind: "drill", drill: DRILLS[i] };
-            if (found && found.lesson) startQuiz({ kind: "lesson", id: found.lesson.id, title: found.lesson.title + " · 随堂测", mod: found.lesson.mod, items: found.lesson.quiz, data: found.lesson.data || null, mode: "instant" });
+            if (found && found.lesson) startQuiz({ kind: "lesson", id: found.lesson.id, title: found.lesson.title + " · 随堂测", mod: found.lesson.mod, items: lessonQuizItems(found.lesson), data: found.lesson.data || null, mode: "instant" });
             else if (found && found.drill) startQuiz({ kind: "drill", id: found.drill.id, title: found.drill.title, mod: found.drill.mod, items: found.drill.quiz, data: found.drill.data || null, mode: "instant" });
           }
         }
         else if (act === "open-pool" || act === "pool-again") startPool(arg);
-        else if (act === "bank-start" || act === "bank-again") startBankQuiz(arg);
         else if (act === "course-filter") { courseFilter = arg; renderCourse(); }
         else if (act === "course-group") { courseOpen[arg] = !courseOpen[arg]; renderCourse(); }
         else if (act === "teach-toggle") {
