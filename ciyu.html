@@ -139,7 +139,7 @@ th{color:var(--red);white-space:nowrap}
     <div class="stats">
       <div class="stat"><b id="statTotal">—</b><span>收录词条</span></div>
       <div class="stat"><b>★★★★★</b><span>超高频 27 个 · 必背</span></div>
-      <div class="stat"><b id="statMastered">0</b><span>本次已掌握</span></div>
+      <div class="stat"><b id="statMastered">0</b><span>今日已掌握</span></div>
       <div class="stat"><b id="statQuiz">—</b><span>最近一次测验</span></div>
     </div>
     <div class="today">
@@ -346,8 +346,12 @@ var CONFUSE = [
  {a:"权利",b:"权力",key:"分界点：个人权益 vs 职位支配力",note:"公民依法享有的叫权利（选举权、知情权、合法权利）；靠职位行使的支配力量叫权力（行使权力、滥用权力）。看主语：个人→权利，公职→权力。"}
 ];
 
-/* ---------- state (in-memory only) ---------- */
-var state = { mastered:{}, weak:{}, deck:[], idx:0, revealed:false, bankFilter:"all", lastQuiz:null, bankLimit:120 };
+/* ---------- state (persisted in localStorage; same approach as the study system) ---------- */
+var CIYU_LS_KEY = "ciyu-study-v1";
+var state = { mastered:{}, weak:{}, masteredDay:{}, deck:[], idx:0, revealed:false, bankFilter:"all", lastQuiz:null, bankLimit:120 };
+function todayKey(){ var d=new Date(); return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate(); }
+function saveCiyuState(){ try{ localStorage.setItem(CIYU_LS_KEY, JSON.stringify({mastered:state.mastered, weak:state.weak, masteredDay:state.masteredDay, lastQuiz:state.lastQuiz})); }catch(e){ /* localStorage unavailable: falls back to this session only */ } }
+(function loadCiyuState(){ try{ var raw=localStorage.getItem(CIYU_LS_KEY); if(!raw) return; var d=JSON.parse(raw); if(d.mastered) state.mastered=d.mastered; if(d.weak) state.weak=d.weak; if(d.masteredDay) state.masteredDay=d.masteredDay; if(d.lastQuiz) state.lastQuiz=d.lastQuiz; }catch(e){ /* unreadable: start fresh */ } })();
 function stars(n){ return "★".repeat(n)+"☆".repeat(5-n); }
 function $(id){ return document.getElementById(id); }
 
@@ -394,23 +398,26 @@ function renderCard(){
 }
 function updateStats(){
   var m=Object.keys(state.mastered).length;
-  $("statMastered").textContent=m;
-  $("statTotal").textContent=WORDS.length+" 条";
-  var pct=Math.min(100, Math.round(m/20*100));
+  var today=todayKey(), mToday=0;
+  for(var t in state.masteredDay){ if(state.masteredDay[t]===today) mToday++; }
+  $("statMastered").textContent=mToday;
+  $("statTotal").textContent=WORDS.length+" 条 · 已掌握 "+m+" 条";
+  var pct=Math.min(100, Math.round(mToday/20*100));
   $("todayBar").style.width=pct+"%";
-  $("todayText").textContent = m>=20 ? "今日目标已完成 🎉 再去做一组测验巩固一下" : "已掌握 "+m+" / 20 个 · 还差 "+(20-m)+" 个";
+  $("todayText").textContent = mToday>=20 ? "今日目标已完成 🎉 再去做一组测验巩固一下" : "今日已掌握 "+mToday+" / 20 个 · 还差 "+(20-mToday)+" 个";
   $("statQuiz").textContent = state.lastQuiz ? state.lastQuiz : "尚未测验";
+  saveCiyuState();
 }
 $("revealBtn").addEventListener("click", function(){ $("flashCard").classList.add("revealed"); state.revealed=true; });
 $("nextBtn").addEventListener("click", function(){ state.idx++; renderCard(); });
 $("prevBtn").addEventListener("click", function(){ state.idx--; renderCard(); });
 $("knowBtn").addEventListener("click", function(){
   var w=state.deck[state.idx]; if(!w) return;
-  state.mastered[w.t]=true; delete state.weak[w.t]; state.idx++; renderCard();
+  state.mastered[w.t]=true; state.masteredDay[w.t]=todayKey(); delete state.weak[w.t]; state.idx++; renderCard();
 });
 $("weakBtn").addEventListener("click", function(){
   var w=state.deck[state.idx]; if(!w) return;
-  state.weak[w.t]=true; delete state.mastered[w.t]; state.idx++; renderCard();
+  state.weak[w.t]=true; delete state.mastered[w.t]; delete state.masteredDay[w.t]; state.idx++; renderCard();
 });
 $("shuffleBtn").addEventListener("click", function(){
   for(var i=state.deck.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var tmp=state.deck[i]; state.deck[i]=state.deck[j]; state.deck[j]=tmp; }
@@ -521,8 +528,8 @@ function renderQuestion(){
       var chosen=q.opts[parseInt(btn.dataset.i)];
       document.querySelectorAll(".opt").forEach(function(b,idx){ b.disabled=true; if(q.opts[idx].ok) b.classList.add("correct"); });
       var fb=$("fb"); fb.classList.add("show");
-      if(chosen.ok){ quiz.score++; fb.classList.add("ok"); fb.innerHTML='<b>✓ 答对了。</b><br>'+q.explain; if(!state.weak[q.w.t]) state.mastered[q.w.t]=true; }
-      else { btn.classList.add("wrong"); fb.classList.add("no"); fb.innerHTML='<b>✕ 答错了，正确答案已标绿。</b><br>'+q.explain; state.weak[q.w.t]=true; delete state.mastered[q.w.t]; quiz.wrong.push(q); }
+      if(chosen.ok){ quiz.score++; fb.classList.add("ok"); fb.innerHTML='<b>✓ 答对了。</b><br>'+q.explain; if(!state.weak[q.w.t]) { state.mastered[q.w.t]=true; state.masteredDay[q.w.t]=todayKey(); } }
+      else { btn.classList.add("wrong"); fb.classList.add("no"); fb.innerHTML='<b>✕ 答错了，正确答案已标绿。</b><br>'+q.explain; state.weak[q.w.t]=true; delete state.mastered[q.w.t]; delete state.masteredDay[q.w.t]; quiz.wrong.push(q); }
       $("nextWrap").style.display="block"; updateStats();
       $("nextQ").addEventListener("click", function(){ quiz.i++; if(quiz.i>=quiz.list.length) renderResult(); else renderQuestion(); });
     });
