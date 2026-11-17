@@ -1,0 +1,1275 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="data:," />
+    <title>每月时政</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700;900&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --bg: #ffffff;
+        --bg-soft: #f6f4f1;
+        --card: #ffffff;
+        --ink: #1d2129;
+        --ink-2: #4e5563;
+        --ink-3: #8a8f98;
+        --line: #e4e0da;
+        --red: #a31621;
+        --red-soft: #fbf0f0;
+        --gold: #9a6a12;
+        --gold-soft: #faf3e0;
+        --green: #1e7d46;
+        --green-soft: #eaf5ee;
+        --bad: #b3261e;
+        --bad-soft: #fbeeee;
+        --shadow: 0 1px 3px rgba(29,33,41,.07);
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #141518;
+          --bg-soft: #1c1e22;
+          --card: #1c1e22;
+          --ink: #eceef1;
+          --ink-2: #b7bcc4;
+          --ink-3: #7e848d;
+          --line: #2e3138;
+          --red: #e0656d;
+          --red-soft: #2c1e20;
+          --gold: #d9a94a;
+          --gold-soft: #2a2416;
+          --green: #4cc07c;
+          --green-soft: #16281d;
+          --bad: #e5736b;
+          --bad-soft: #2c1c1a;
+          --shadow: 0 1px 3px rgba(0,0,0,.4);
+        }
+      }
+      * { box-sizing: border-box; }
+      html { -webkit-text-size-adjust: 100%; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+        font-size: 16px;
+        line-height: 1.65;
+      }
+      button { font-family: inherit; cursor: pointer; }
+      a { color: var(--red); }
+
+      .wrap { max-width: 880px; margin: 0 auto; padding: 0 16px 64px; }
+
+      /* ---------- 头部 ---------- */
+      header { padding: 28px 0 18px; border-bottom: 3px solid var(--red); }
+      .kicker { font-size: 13px; letter-spacing: .18em; color: var(--red); font-weight: 700; margin: 0 0 6px; }
+      h1 { font-family: "Noto Serif SC", serif; font-weight: 900; font-size: clamp(30px, 7vw, 44px); line-height: 1.2; margin: 0 0 8px; }
+      .lede { color: var(--ink-2); margin: 0; font-size: 15px; }
+      .lede b { color: var(--ink); }
+      .meta-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+      .chip { font-size: 13px; color: var(--ink-2); background: var(--bg-soft); border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; }
+      .chip b { color: var(--red); font-weight: 700; }
+
+      /* ---------- 页签 ---------- */
+      nav.tabs {
+        position: sticky; top: 0; z-index: 20;
+        display: flex; gap: 4px; padding: 10px 0;
+        background: var(--bg);
+        border-bottom: 1px solid var(--line);
+      }
+      nav.tabs { flex-wrap: wrap; }
+      nav.tabs button {
+        flex: 1 1 21%; min-height: 44px; border: 1px solid var(--line); border-radius: 8px;
+        background: var(--card); color: var(--ink-2); font-size: 14.5px; font-weight: 500;
+        padding: 8px 2px; white-space: nowrap;
+      }
+      nav.tabs button.active { background: var(--red); border-color: var(--red); color: #fff; font-weight: 700; }
+      @media (prefers-color-scheme: dark) {
+        nav.tabs button.active { color: #141518; }
+      }
+
+      .view { display: none; padding-top: 20px; }
+      .view.show { display: block; }
+      .view-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
+      .view-head h2 { font-family: "Noto Serif SC", serif; font-size: 22px; font-weight: 700; margin: 0; }
+      .view-head span { color: var(--ink-3); font-size: 13px; white-space: nowrap; }
+      .view-intro { color: var(--ink-2); font-size: 14px; margin: 0 0 18px; }
+
+      /* ---------- 时政条目 ---------- */
+      .item {
+        display: grid; grid-template-columns: 64px 1fr; gap: 14px;
+        padding: 18px 0; border-bottom: 1px solid var(--line);
+      }
+      .item:last-child { border-bottom: none; }
+      .date-rail { text-align: center; padding-top: 2px; }
+      .date-rail .d { font-family: "Noto Serif SC", serif; font-size: 26px; font-weight: 900; line-height: 1; color: var(--ink); }
+      .date-rail .m { font-size: 12px; color: var(--ink-3); margin-top: 4px; letter-spacing: .1em; }
+      .item h3 { font-size: 17px; font-weight: 700; margin: 0 0 6px; line-height: 1.45; }
+      .tag-star {
+        display: inline-block; vertical-align: 2px; margin-left: 6px;
+        font-size: 12px; font-weight: 700; color: var(--red);
+        background: var(--red-soft); border: 1px solid var(--red);
+        border-radius: 4px; padding: 0 6px; line-height: 1.7;
+      }
+      .item p.sum { margin: 0 0 10px; color: var(--ink-2); font-size: 15px; }
+      .point {
+        background: var(--bg-soft); border-radius: 8px; padding: 10px 12px;
+        font-size: 14px; color: var(--ink-2); margin: 0 0 10px;
+      }
+      .point b { color: var(--ink); }
+      .point .lab { color: var(--red); font-weight: 700; margin-right: 6px; }
+      .caveat {
+        background: var(--gold-soft); border-radius: 8px; padding: 8px 12px;
+        font-size: 13.5px; color: var(--gold); margin: 0 0 10px; font-weight: 500;
+      }
+      .src { font-size: 13px; color: var(--ink-3); margin: 0; }
+      .src a { text-decoration: none; border-bottom: 1px dotted var(--red); padding: 6px 0; display: inline-block; }
+      @media (max-width: 520px) {
+        .item { grid-template-columns: 48px 1fr; gap: 10px; }
+        .date-rail .d { font-size: 21px; }
+      }
+
+      /* ---------- 主题 ---------- */
+      .theme {
+        border: 1px solid var(--line); border-radius: 12px; background: var(--card);
+        box-shadow: var(--shadow); padding: 20px; margin-bottom: 16px;
+      }
+      .theme h3 { font-family: "Noto Serif SC", serif; font-size: 19px; margin: 0 0 8px; }
+      .theme p { margin: 0 0 10px; color: var(--ink-2); font-size: 15px; }
+      .theme p:last-child { margin-bottom: 0; }
+      .theme .nums { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+      .theme .nums span { font-size: 13px; background: var(--red-soft); color: var(--red); border-radius: 6px; padding: 3px 10px; font-weight: 500; }
+
+      /* ---------- 刷题 ---------- */
+      .quiz-box { border: 1px solid var(--line); border-radius: 12px; background: var(--card); box-shadow: var(--shadow); padding: 22px 20px; }
+      .quiz-start p { color: var(--ink-2); margin: 0 0 16px; }
+      .btn {
+        min-height: 48px; border: none; border-radius: 8px; padding: 10px 22px;
+        background: var(--red); color: #fff; font-size: 16px; font-weight: 700;
+      }
+      @media (prefers-color-scheme: dark) { .btn { color: #141518; } }
+      .btn.ghost { background: var(--card); color: var(--ink); border: 1px solid var(--line); font-weight: 500; }
+      .q-progress { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+      .q-progress .bar { flex: 1; height: 6px; background: var(--bg-soft); border-radius: 3px; overflow: hidden; border: 1px solid var(--line); }
+      .q-progress .bar i { display: block; height: 100%; background: var(--red); width: 0; transition: width .25s; }
+      .q-progress .txt { font-size: 13px; color: var(--ink-3); white-space: nowrap; }
+      .q-text { font-size: 17px; font-weight: 700; line-height: 1.55; margin: 0 0 16px; }
+      .opts { display: grid; gap: 10px; }
+      .opt {
+        display: flex; gap: 10px; align-items: flex-start; text-align: left;
+        width: 100%; min-height: 48px; padding: 12px 14px;
+        border: 1.5px solid var(--line); border-radius: 10px; background: var(--card);
+        color: var(--ink); font-size: 15.5px; line-height: 1.5;
+      }
+      .opt .letter {
+        flex: none; width: 26px; height: 26px; border-radius: 50%;
+        border: 1.5px solid var(--line); display: grid; place-items: center;
+        font-size: 13px; font-weight: 700; color: var(--ink-2); margin-top: 1px;
+      }
+      .opt:hover:not(:disabled) { border-color: var(--red); }
+      .opt.right { border-color: var(--green); background: var(--green-soft); }
+      .opt.right .letter { border-color: var(--green); color: var(--green); }
+      .opt.wrong { border-color: var(--bad); background: var(--bad-soft); }
+      .opt.wrong .letter { border-color: var(--bad); color: var(--bad); }
+      .opt:disabled { cursor: default; opacity: .92; }
+      .explain {
+        display: none; margin-top: 16px; border-radius: 10px; padding: 14px 16px; font-size: 14.5px;
+      }
+      .explain.show { display: block; }
+      .explain.ok { background: var(--green-soft); }
+      .explain.no { background: var(--bad-soft); }
+      .explain .verdict { font-weight: 700; margin: 0 0 6px; }
+      .explain.ok .verdict { color: var(--green); }
+      .explain.no .verdict { color: var(--bad); }
+      .explain p { margin: 0; color: var(--ink-2); }
+      .q-actions { margin-top: 16px; display: flex; justify-content: flex-end; }
+      .score-big { font-family: "Noto Serif SC", serif; font-size: 52px; font-weight: 900; text-align: center; margin: 6px 0 2px; }
+      .score-sub { text-align: center; color: var(--ink-2); margin: 0 0 18px; }
+      .score-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+      .wrong-list { margin-top: 22px; }
+      .wrong-list h4 { margin: 0 0 10px; font-size: 16px; }
+      .wrong-item { border-top: 1px solid var(--line); padding: 12px 0; font-size: 14.5px; }
+      .wrong-item .wq { font-weight: 700; margin: 0 0 4px; }
+      .wrong-item p { margin: 0; color: var(--ink-2); }
+      .wrong-item .wa { color: var(--green); font-weight: 500; }
+
+      /* ---------- 保存的成绩与错题本 ---------- */
+      .study-panel { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+      .study-panel .stat { flex: 1 1 28%; min-width: 92px; border: 1px solid var(--line); border-radius: 10px; background: var(--card); box-shadow: var(--shadow); padding: 10px 12px; text-align: center; }
+      .study-panel .stat .n { font-family: "Noto Serif SC", serif; font-size: 22px; font-weight: 900; line-height: 1.25; }
+      .study-panel .stat .l { font-size: 12.5px; color: var(--ink-3); }
+      .hist { margin: 0 0 16px; font-size: 13.5px; color: var(--ink-2); }
+      .hist span { display: inline-block; background: var(--bg-soft); border: 1px solid var(--line); border-radius: 999px; padding: 2px 10px; margin: 0 6px 6px 0; }
+      .btn.small { min-height: 40px; padding: 6px 14px; font-size: 14px; }
+      .wrong-book { margin-top: 22px; }
+      .wrong-book .wb-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
+      .wrong-book h4 { margin: 0; font-size: 16px; }
+      .wrong-book .wb-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+      .wrong-item .wb-meta { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 8px; }
+      .wrong-item .cnt { font-size: 12.5px; color: var(--bad); font-weight: 700; }
+      .wrong-item .rm { border: 1px solid var(--line); background: var(--card); color: var(--ink-2); border-radius: 6px; padding: 4px 12px; min-height: 32px; font-size: 13px; }
+      .empty-note { color: var(--ink-3); font-size: 14px; margin: 8px 0 0; }
+
+      footer { margin-top: 40px; border-top: 1px solid var(--line); padding-top: 16px; color: var(--ink-3); font-size: 13px; }
+      footer p { margin: 0 0 8px; }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <p class="kicker">河南省考 2027 · 时政复习</p>
+        <h1>每月时政</h1>
+        <p class="lede">按月看大事，每条都标了<b>考点提示</b>；看完去「刷题巩固」随机抽 10 题自测。全部条目来自新华社、中国政府网、央视网等官方来源，有原文链接的逐条附上。</p>
+        <div class="meta-row">
+          <span class="chip">全年 <b>2026 年 1—11 月 · 共 122 条</b></span>
+          <span class="chip"><b>11 月 13 条</b>（截至 11 月 17 日）</span>
+          <span class="chip">题库 <b>38 题</b>随机组卷</span>
+          <span class="chip">内容核实于 2026-11-17</span>
+        </div>
+      </header>
+
+      <nav class="tabs" role="tablist">
+        <button type="button" class="active" data-view="jan">1 月</button>
+        <button type="button" data-view="feb">2 月</button>
+        <button type="button" data-view="mar">3 月</button>
+        <button type="button" data-view="apr">4 月</button>
+        <button type="button" data-view="may">5 月</button>
+        <button type="button" data-view="jun">6 月</button>
+        <button type="button" data-view="jul">7 月</button>
+        <button type="button" data-view="aug">8 月</button>
+        <button type="button" data-view="sep">9 月</button>
+        <button type="button" data-view="oct">10 月</button>
+        <button type="button" data-view="nov">11 月</button>
+        <button type="button" data-view="themes">贯穿主题</button>
+        <button type="button" data-view="quiz">刷题巩固</button>
+      </nav>
+
+      <section class="view show" id="view-jan">
+        <div class="view-head"><h2>2026 年 1 月</h2><span>12 条</span></div>
+        <p class="view-intro">纪委五次全会为全面从严治党定调，省部级研讨班讲正确政绩观；2025 年 GDP 首次突破 140 万亿元是必考数字。</p>
+        <div id="list-jan"></div>
+      </section>
+
+      <section class="view" id="view-feb">
+        <div class="view-head"><h2>2026 年 2 月</h2><span>12 条</span></div>
+        <p class="view-intro">中央一号文件发布、正确政绩观学习教育启动；「十五五」规划纲要草案走完提请全国人大审查前的程序。</p>
+        <div id="list-feb"></div>
+      </section>
+
+      <section class="view" id="view-mar">
+        <div class="view-head"><h2>2026 年 3 月</h2><span>10 条</span></div>
+        <p class="view-intro">全国两会是全年最重的一段：政府工作报告的目标数字、「十五五」规划纲要获批、三部法律同日通过，数字务必记准。</p>
+        <div id="list-mar"></div>
+      </section>
+
+      <section class="view" id="view-apr">
+        <div class="view-head"><h2>2026 年 4 月</h2><span>11 条</span></div>
+        <p class="view-intro">一季度 GDP 增长 5.0%，政治局会议为一季度经济定调；服务业大会、消博会、第 139 届广交会密集登场。</p>
+        <div id="list-apr"></div>
+      </section>
+
+      <section class="view" id="view-may">
+        <div class="view-head"><h2>2026 年 5 月</h2><span>10 条</span></div>
+        <p class="view-intro">特朗普访华、构建「中美建设性战略稳定关系」是全年最重要的外交事件；神舟二十三号迎来首位香港航天员。</p>
+        <div id="list-may"></div>
+      </section>
+
+      <section class="view" id="view-jun">
+        <div class="view-head"><h2>2026 年 6 月</h2><span>9 条</span></div>
+        <p class="view-intro">习近平时隔七年再次访朝；人大常委会修订《商标法》《注册会计师法》，均 2027 年 1 月 1 日施行。</p>
+        <div id="list-jun"></div>
+      </section>
+
+      <section class="view" id="view-jul">
+        <div class="view-head"><h2>2026 年 7 月</h2><span>9 条</span></div>
+        <p class="view-intro">建党 105 周年；长征十号乙实现我国运载火箭一子级首次可控回收；政治局会议决定 10 月召开二十届五中全会。</p>
+        <div id="list-jul"></div>
+      </section>
+
+      <section class="view" id="view-aug">
+        <div class="view-head"><h2>2026 年 8 月</h2><span>11 条</span></div>
+        <p class="view-intro">《生态环境法典》8 月 15 日施行；朱雀三号完成火箭一子级首次陆上回收；《医疗保障法》通过，2027 年 1 月 1 日施行。</p>
+        <div id="list-aug"></div>
+      </section>
+
+      <section class="view" id="view-sep">
+        <div class="view-head"><h2>2026 年 9 月</h2><span>11 条</span></div>
+        <p class="view-intro">上合峰会、金砖会晤、习近平访美三场大外交压轴：中美元首半年内实现互访，在中美关系史上前所未有。</p>
+        <div id="list-sep"></div>
+      </section>
+
+      <section class="view" id="view-oct">
+        <div class="view-head"><h2>2026 年 10 月</h2><span>14 条</span></div>
+        <p class="view-intro">本月最重的是 10 月 26—29 日的二十届五中全会；数字类考点密集：GDP 4.6%、多个周年纪念。</p>
+        <div id="list-oct"></div>
+      </section>
+
+      <section class="view" id="view-nov">
+        <div class="view-head"><h2>2026 年 11 月</h2><span>13 条 · 截至 11 月 17 日</span></div>
+        <p class="view-intro">本月最重的是 11 月 6 日全国人大常委会一次通过四部法律；APEC 在深圳，几条是「已宣布、尚未举行」，别记错时间状态。</p>
+        <div id="list-nov"></div>
+      </section>
+
+      <section class="view" id="view-themes">
+        <div class="view-head"><h2>贯穿全年的主题</h2><span>串起来记</span></div>
+        <p class="view-intro">单条时政容易忘，把它们挂到六条主线上，申论和常识都用得上。</p>
+
+        <div class="theme">
+          <h3>主线一 ·「十五五」开局之年</h3>
+          <p>2026 年是「十五五」（2026—2030 年）开局之年，全年就是一条完整的程序链：规划《建议》由二十届四中全会于 2025 年 10 月审议通过 → 2026 年 2 月国务院全体会议、政治局会议先后讨论纲要草案稿 → 3 月 12 日十四届全国人大四次会议批准纲要（7 万余字、18 篇 62 章、20 项主要指标、109 项重大工程项目）→ 8 月底数十份国家级专项规划密集印发。经济数字也挂在这条线上：2025 年 GDP 首破 140 万亿元、一季度 +5.0%、上半年 +4.7%、前三季度 +4.6%。</p>
+          <div class="nums"><span>2025 年 GDP 140 万亿元</span><span>一季度 +5.0%</span><span>上半年 +4.7%</span><span>前三季度 +4.6%</span></div>
+        </div>
+
+        <div class="theme">
+          <h3>主线二 · 正确政绩观学习教育</h3>
+          <p>1 月 20 日省部级主要领导干部专题研讨班开班，习近平讲授「开年第一课」，强调树立和践行正确政绩观；2 月 24 日《习近平关于树立和践行正确政绩观论述摘编》出版（7 个专题、253 段论述），全党树立和践行正确政绩观学习教育正式启动。这是 2026 年党的建设的重要任务，申论作文和面试都可能直接命题。</p>
+          <div class="nums"><span>1 月 20 日 开年第一课</span><span>2 月 24 日 论述摘编出版</span><span>7 个专题 · 253 段论述</span></div>
+        </div>
+
+        <div class="theme">
+          <h3>主线三 · 全面从严治党</h3>
+          <p>1 月 12 日二十届中央纪委五次全会开幕定调 → 7 月 30 日政治局会议决定 10 月召开二十届五中全会、议题就是持之以恒推进全面从严治党 → 10 月 26—29 日五中全会审议通过《中共中央关于持之以恒推进全面从严治党若干重大问题的决定》（新时代以来第一份专门就此作出的中央全会决定）→ 11 月 15 日修订发布的《中国共产党地方委员会工作条例》是具体落实。发布会上披露：党的十八大以来全国纪检监察机关共立案 810.5 万件、处分 792.2 万人。</p>
+          <div class="nums"><span>处分 792.2 万人</span><span>处分中管干部 963 人</span><span>二十一大 2027 年下半年召开</span></div>
+        </div>
+
+        <div class="theme">
+          <h3>主线四 · 中美关系新定位：半年内互访</h3>
+          <p>5 月 14 日特朗普访华（美国总统时隔 9 年再次访华），两国元首赞同将构建「中美建设性战略稳定关系」作为中美关系新定位；9 月 24 日习近平对美国进行国事访问（时隔 11 年），两国元首不到半年实现互访，在中美关系史上前所未有。这条线还连着 1 月复信美国青少年师生、2 月复信艾奥瓦州友人、5 月复信中美青年学子的人文交流线（「5 年 5 万」倡议）。</p>
+          <div class="nums"><span>中美建设性战略稳定关系</span><span>5 月特朗普访华</span><span>9 月习近平访美</span></div>
+        </div>
+
+        <div class="theme">
+          <h3>主线五 · 可重复使用运载火箭突破</h3>
+          <p>7 月 10 日长征十号乙首飞，火箭一子级在海上回收平台以网系捕获方式成功回收——我国首次运载火箭一子级可控回收、全球首次海上网系回收；8 月 19 日朱雀三号一子级成功回收——我国首次陆上回收、首次采用着陆腿方式。对照记：海上网系 vs 陆上着陆腿。再加上 5 月天舟十号「十战十捷」、神舟二十三号首位香港航天员，航天线全年不断。</p>
+          <div class="nums"><span>7 月 10 日 海上网系回收</span><span>8 月 19 日 陆上着陆腿回收</span><span>天舟十号 十战十捷</span></div>
+        </div>
+
+        <div class="theme">
+          <h3>主线六 · 新法施行时间线（2027 年 1 月 1 日扎堆）</h3>
+          <p>把施行日期排成一条线记：2026 年 1 月 1 日新修订《治安管理处罚法》施行；3 月 12 日通过的民族团结进步促进法 7 月 1 日施行、生态环境法典 8 月 15 日施行、国家发展规划法自公布之日起施行；10 月 1 日新修订《国防动员法》施行；<b>2027 年 1 月 1 日</b>扎堆：检察公益诉讼法、南极活动与环境保护法、《医疗保障法》、修订《商标法》《注册会计师法》和新版医保药品目录；新修订《水法》2027 年 3 月 22 日施行；反跨境腐败法自公布之日起施行。</p>
+          <div class="nums"><span>2026-08-15 生态环境法典</span><span>2026-10-01 国防动员法</span><span>2027-01-01 五法 + 医保目录</span><span>2027-03-22 水法</span></div>
+        </div>
+      </section>
+
+      <section class="view" id="view-quiz">
+        <div class="view-head"><h2>刷题巩固</h2><span>38 题题池 · 每组随机 10 题</span></div>
+        <p class="view-intro">题目全部出自全年 122 条时政，选项顺序和抽题每次都随机，背答案没用，记考点才行。成绩和错题本保存在本机浏览器里，关掉页面再打开还在。</p>
+        <div id="study-panel"></div>
+        <div class="quiz-box" id="quiz-box"></div>
+        <div class="wrong-book" id="wrong-book"></div>
+      </section>
+
+      <footer>
+        <p>来源说明：本页 122 条时政均于 2026 年 11 月 17 日核实，来源为新华社、中国政府网、央视网、人民日报等官方或官方转载渠道，有原文链接的逐条附上；个别 1—9 月条目只有新华社电讯、未取得确切全文链接，只标注来源机构、不附链接；个别条目为引述新华社/外交部的二手报道，已在条目内注明。</p>
+        <p>未收录说明：2026 年尚未过完，12 月的内容（包括按惯例在 12 月举行的中央经济工作会议）不在本页；11 月 18—19 日的 APEC 领导人非正式会议、11 月 19 日中俄美元首会晤在核实截止日之后，本页只记录此前的宣布，不提前写结果。另有两处日期未完全核实，已在条目内标注：3 月 10 日政协闭幕日为按两会会期与惯例推断；6 月两部文选的出版日期按月末归集。</p>
+        <p>刷题成绩和错题本保存在本机浏览器里，关掉页面再打开还在；只在同一台设备、同一个浏览器里有效，清除浏览器数据会一并清掉。</p>
+      </footer>
+    </div>
+
+    <script>
+      var JAN = [
+        { d: "01", t: "新修订《治安管理处罚法》正式施行", star: false,
+          s: "新修订的《治安管理处罚法》自 2026 年 1 月 1 日起施行，是该法实施近 20 年来的一次重大调整，明确正当防卫，将无人机「黑飞」、网络暴力等 20 余种新型危害行为纳入处罚范围。",
+          p: "新法施行日期、新增处罚行为；常考「新法何时施行、新增了哪些行为」。",
+          src: "新华社（时政资料转载）", url: "https://www.yeyulingfeng.com/wendang/91359752.html" },
+        { d: "01", t: "《求是》发表习近平《学习好贯彻好党的二十届四中全会精神》", star: false,
+          s: "新年首日《求是》发表习近平重要文章，指出「十五五」时期在基本实现社会主义现代化进程中具有承前启后的重要地位，部署贯彻新发展理念、推动高质量发展等。",
+          p: "「十五五」开局的纲领性论述，常与四中全会、十五五规划建议联考。",
+          src: "央视网《中南海月刊（2026.1）》", url: "https://news.cctv.com/tiantianxuexi/znhyk/2026/yiyue/index.shtml" },
+        { d: "05", t: "习近平会见韩国总统李在明", star: false,
+          s: "习近平在人民大会堂同来华国事访问的韩国总统李在明举行会谈，强调中韩是「搬不走的重要近邻、分不开的合作伙伴」，双方签署科技创新、生态环境、交通运输、经贸合作等多领域文件。",
+          p: "2026 年元首外交开篇、中韩关系；注意「短时间内实现元首互访」。",
+          src: "央视网《中南海月刊（2026.1）》", url: "https://news.cctv.com/tiantianxuexi/znhyk/2026/yiyue/index.shtml" },
+        { d: "07", t: "习近平复信美国青少年师生", star: false,
+          s: "习近平复信由美国迈阿密钻石领航学院等学校师生组成的访华代表团，勉励大家「为赓续两国人民友谊搭建起一座桥」；自「5 年邀请 5 万名美国青少年来华」倡议以来，已有超 4 万名美国青少年访华。",
+          p: "中美人文交流、「5 年 5 万」倡议的数字（已超 4 万名）。",
+          src: "央视网《中南海月刊（2026.1）》", url: "https://news.cctv.com/tiantianxuexi/znhyk/2026/yiyue/index.shtml" },
+        { d: "12", t: "二十届中央纪委五次全会开幕，习近平发表重要讲话", star: true,
+          s: "习近平在二十届中央纪委第五次全体会议上发表重要讲话，强调以更高标准、更实举措推进全面从严治党，更加坚决有力贯彻落实党中央重大决策部署、更加科学有效把权力关进制度笼子、更加清醒坚定推进反腐败斗争，为实现「十五五」目标任务提供坚强保障。",
+          p: "全面从严治党年度定调；「腐败是我们党面临的最大风险、最大威胁、最大挑战」。",
+          src: "新华社（福建省政府转载）", url: "https://www.fujian.gov.cn/sylm/szyw/202601/t20260113_7074038.htm" },
+        { d: "12", t: "国办发布《「高效办成一件事」2026 年度第一批重点事项清单》", star: false,
+          s: "国务院办公厅对外发布 2026 年度第一批重点事项清单；截至目前，国家层面「高效办成一件事」重点事项清单已推出五批共 55 项。",
+          p: "政务服务改革、优化营商环境；数字记「五批共 55 项」。",
+          src: "新华社（宁夏日报转载）", url: "" },
+        { d: "16", t: "习近平会见加拿大总理卡尼", star: false,
+          s: "习近平在人民大会堂会见来华正式访问的加拿大总理卡尼，就中加关系提出 4 点意见，并提出「相互尊重、共同发展、彼此信任、相互协作」的「四个伙伴」定位。",
+          p: "中加关系转圜向好、「四个伙伴」定位的四个词要记全。",
+          src: "新华社 / 央视网《中南海月刊（2026.1）》", url: "https://news.cctv.com/tiantianxuexi/znhyk/2026/yiyue/index.shtml" },
+        { d: "16", t: "国务院常务会议研究提振消费、培育服务消费新增长点", star: false,
+          s: "李强主持国务院常务会议，听取提振消费专项行动进展汇报，研究加快培育服务消费新增长点等促消费举措，强调狠抓重点任务落实、以「组合拳」增强居民消费内生动力。",
+          p: "扩大内需、服务消费；「十五五」「内需主导」政策的落点。",
+          src: "新华社", url: "" },
+        { d: "19", t: "2025 年 GDP 公布：首次突破 140 万亿元，同比增长 5.0%", star: false,
+          s: "国家统计局发布：2025 年国内生产总值 1401879 亿元，按不变价格计算比上年增长 5.0%，「十四五」胜利收官；全年居民人均可支配收入 43377 元，实际增长 5.0%。同日央行决定自 1 月 19 日起下调再贷款、再贴现利率 0.25 个百分点。",
+          p: "必考经济数据：140 万亿元、5.0%、人均可支配收入 43377 元。",
+          src: "国家统计局", url: "https://www.stats.gov.cn/sj/zxfb/202601/t20260119_1962330.html" },
+        { d: "20", t: "省部级主要领导干部专题研讨班开班，习近平讲授「开年第一课」", star: false,
+          s: "省部级主要领导干部学习贯彻党的二十届四中全会精神专题研讨班在中央党校开班，习近平发表重要讲话，强调树立和践行正确政绩观，「自觉为人民出政绩、以实干出政绩」，并部署建设现代化产业体系等「十五五」战略任务。",
+          p: "正确政绩观是 2026 年高频考点，与 2 月启动的学习教育联考。",
+          src: "央视网《中南海月刊（2026.1）》", url: "https://news.cctv.com/tiantianxuexi/znhyk/2026/yiyue/index.shtml" },
+        { d: "23", t: "习近平同巴西总统卢拉通电话，并致电祝贺苏林当选越共中央总书记", star: false,
+          s: "习近平 1 月 23 日上午同巴西总统卢拉通电话；同日致电苏林，祝贺他当选越共中央总书记。",
+          p: "中巴关系、金砖／全球南方外交；越共十四大后中越关系。",
+          src: "新华社（宁夏日报转载）", url: "" },
+        { d: "29", t: "习近平会见英国首相斯塔默", star: false,
+          s: "习近平在人民大会堂会见来华正式访问的英国首相斯塔默，双方同意发展长期稳定的全面战略伙伴关系；斯塔默是 8 年来首位访华的英国首相，率 60 多位英工商文化界人士访华。",
+          p: "中英关系；1 月韩国、爱尔兰、加拿大、芬兰、英国领导人密集访华的「中欧外交热潮」。",
+          src: "外交部", url: "https://www.mfa.gov.cn/web/zyxw/202601/t20260129_11847156.shtml" }
+      ];
+
+      var FEB = [
+        { d: "03", t: "2026 年中央一号文件发布", star: true,
+          s: "《中共中央 国务院关于锚定农业农村现代化 扎实推进乡村全面振兴的意见》发布，是党的十八大以来第 14 个指导「三农」工作的中央一号文件，也是「十五五」首个中央一号文件，共六部分，首提「实施常态化精准帮扶」。",
+          p: "每年必考：文件全名、第 14 个、「十五五」首个、六部分、「常态化精准帮扶」首提。",
+          src: "新华社（湖北省农业农村厅转载）", url: "http://nyt.hubei.gov.cn/sytt/202602/t20260203_5869485.shtml" },
+        { d: "04", t: "习近平同俄罗斯总统普京视频会晤、同美国总统特朗普通电话", star: false,
+          s: "2 月 4 日（农历立春），习近平先后同俄罗斯总统普京举行视频会晤、同美国总统特朗普通电话。",
+          p: "2026 年中俄、中美元首互动的开年安排；日期正值立春。",
+          src: "央视网《中南海月刊（2026.2）》", url: "https://news.cctv.com/tiantianxuexi/znhyk/2026/eryue/index.shtml" },
+        { d: "06", t: "国务院第十次全体会议讨论「十五五」规划纲要草案稿", star: false,
+          s: "国务院第十次全体会议讨论「十五五」规划纲要草案稿，为提请全国人大审查做准备。",
+          p: "十五五纲要编制程序：国务院全体会议 → 政治局会议 → 全国人大审查批准。",
+          src: "新华社「『十五五』规划纲要编制记」", url: "https://news.qq.com/rain/a/20260331A01TLX00" },
+        { d: "09", t: "习近平春节前夕在北京考察并看望慰问基层干部群众", star: false,
+          s: "2 月 9 日至 10 日，习近平在北京考察：在国家信创园察看科技创新成果，在养老服务街区关切便民惠民民生举措，在隆福寺新春市集了解节日市场供应，走访银龄老年公寓、快递小哥等。",
+          p: "常考考察地点与主题对应：信创园—科技创新、养老街区—民生、隆福寺—市场供应。",
+          src: "新华社 / 央视网《中南海月刊（2026.2）》", url: "https://news.cctv.com/tiantianxuexi/znhyk/2026/eryue/index.shtml" },
+        { d: "14", t: "中共中央、国务院举行 2026 年春节团拜会", star: false,
+          s: "2 月 14 日，中共中央、国务院在人民大会堂举行 2026 年春节团拜会，习近平发表讲话，总结乙巳蛇年「很不平凡」，展望丙午马年「策马扬鞭、勇往直前」。",
+          p: "团拜会讲话对上年与当年的定性表述；乙巳蛇年 → 丙午马年。",
+          src: "中国政府网（新华社）", url: "https://www.gov.cn/yaowen/liebiao/202602/content_7057993.htm" },
+        { d: "16", t: "习近平复信美国艾奥瓦州友人并回赠新春贺卡", star: false,
+          s: "2 月 16 日，习近平复信美国艾奥瓦州友人并回赠新春贺卡，致以节日祝福。",
+          p: "中美民间友好、「5 年 5 万」人文交流线的一环。",
+          src: "央视网《中南海月刊（2026.2）》", url: "https://news.cctv.com/tiantianxuexi/znhyk/2026/eryue/index.shtml" },
+        { d: "17", t: "丙午马年春节", star: false,
+          s: "农历丙午马年春节到来；2 月 24 日多省份召开「新春第一会」：广东聚焦制造业与服务业协同发展，湖北着力建成中部地区崛起重要战略支点，湖南以「企业服务年行动」促民营经济发展。",
+          p: "马年春节时间点与各地「新春第一会」的政策信号。",
+          c: "2 月 17 日为农历正月初一的公历换算日期，与 2 月 14 日团拜会、2 月 24 日「新春第一会」的时间线一致。",
+          src: "央视网《中南海月刊（2026.2）》", url: "https://news.cctv.com/tiantianxuexi/znhyk/2026/eryue/index.shtml" },
+        { d: "24", t: "国务院常务会议部署银发经济、基层消防，研究《水法（修订草案）》", star: false,
+          s: "李强主持国务院常务会议，对抓紧做好春节假期后政府工作作出部署，研究推进银发经济和养老服务发展，审议通过《关于加强基层消防工作的意见》，讨论《水法（修订草案）》。",
+          p: "银发经济、养老服务是 2026 年民生热点；《水法》修订草案后来在 11 月 6 日通过、2027 年 3 月 22 日施行。",
+          src: "新华社（人民日报转载）", url: "https://rmrb.shangan.tech/archive/2026-02-25.html" },
+        { d: "24", t: "《习近平关于树立和践行正确政绩观论述摘编》出版，学习教育启动", star: false,
+          s: "中共中央党史和文献研究院编辑的《论述摘编》由中央文献出版社出版，分 7 个专题，共 253 段论述，摘自 2012 年 11 月至 2026 年 1 月期间 150 多篇重要文献；新春伊始，全党树立和践行正确政绩观学习教育正式启动。",
+          p: "正确政绩观学习教育是「今年党的建设的重要任务」；数字记 7 个专题、253 段论述。",
+          src: "新华社（人民日报转载）", url: "" },
+        { d: "25", t: "习近平会见德国总理默茨", star: false,
+          s: "习近平在钓鱼台国宾馆会见来华正式访问的德国总理默茨，指出中德分别是世界第二、第三大经济体，双方发表《中华人民共和国和德意志联邦共和国联合新闻声明》；这是默茨就任后首次访华。",
+          p: "中德、中欧关系；「世界第二、第三大经济体」的对应关系。",
+          src: "新华社（人民日报转载）", url: "https://rmrb.shangan.tech/archive/2026-02-26.html" },
+        { d: "26", t: "中央政治局委员等向党中央和习近平总书记述职", star: false,
+          s: "中央政治局委员、书记处书记，全国人大常委会、国务院、全国政协党组成员，最高人民法院、最高人民检察院党组书记就 2025 年度工作向党中央和习近平总书记书面述职；习近平审阅并提出重要要求，强调推动实现「十五五」良好开局。",
+          p: "党内述职制度、年度例行安排；述职主体范围常作选项干扰。",
+          src: "新华社（人民日报转载）", url: "https://rmrb.shangan.tech/archive/2026-02-27.html" },
+        { d: "27", t: "中央政治局会议讨论「十五五」规划纲要草案稿", star: false,
+          s: "习近平主持中央政治局会议，讨论国务院拟提请十四届全国人大四次会议审查的「十五五」规划纲要草案稿。",
+          p: "十五五纲要提请全国人大前的最后一道程序性节点，与 2 月 6 日国务院全体会议成对记忆。",
+          src: "新华社「『十五五』规划纲要编制记」", url: "https://news.qq.com/rain/a/20260331A01TLX00" }
+      ];
+
+      var MAR = [
+        { d: "04", t: "全国政协十四届四次会议开幕", star: false,
+          s: "全国政协十四届四次会议在北京开幕；2026 年全国两会 3 月 4 日至 3 月 12 日举行。",
+          p: "两会会期、政协会议开幕时间（3 月 4 日，先于人大一天）。",
+          src: "毕马威《2026 年两会要点解读》", url: "https://launch.kpmg.com/content/dam/kpmgsites/cn/pdf/zh/2026/03/key-points-of-the-two-sessions-in-2026-an-interpretation.pdf.coredownload.inline.pdf" },
+        { d: "05", t: "十四届全国人大四次会议开幕，李强作政府工作报告", star: true,
+          s: "李强作政府工作报告：2026 年 GDP 增长目标为 4.5%—5%，城镇调查失业率 5.5% 左右，城镇新增就业 1200 万人以上，居民消费价格涨幅 2% 左右，粮食产量 1.4 万亿斤左右，赤字率拟按 4% 左右安排，拟发行超长期特别国债 1.3 万亿元、地方政府专项债券 4.4 万亿元；「十五五」规划纲要草案同日提请审查，国家发展规划法草案同时提请审议。",
+          p: "两会必考之首：所有目标数字都要记准；GDP 首次用区间目标（4.5%—5%）。",
+          src: "新华社 / 毕马威两会解读", url: "https://news.qq.com/rain/a/20260305A07EHJ00" },
+        { d: "05", t: "习近平参加江苏代表团审议", star: false,
+          s: "习近平参加他所在的十四届全国人大四次会议江苏代表团审议，强调一体推进教育科技人才发展，并用「四个新」为新质生产力发展破题；要求江苏在拓宽共同富裕途径上带好头。",
+          p: "教育科技人才一体化、新质生产力「四个新」；习近平所在代表团是江苏团。",
+          src: "央视网《中南海月刊（2026.3）》", url: "https://news.cctv.com/tiantianxuexi/znhyk/2026/sanyue/index.shtml" },
+        { d: "06", t: "习近平参加政协联组会", star: false,
+          s: "习近平参加政协联组会，指出科技创新要「有所为有所不为」，更多解决「要不来、买不来、讨不来」的问题。",
+          p: "科技自立自强、「有所为有所不为」；「要不来、买不来、讨不来」是高频引文。",
+          src: "央视网《中南海月刊（2026.3）》", url: "https://news.cctv.com/tiantianxuexi/znhyk/2026/sanyue/index.shtml" },
+        { d: "10", t: "全国政协十四届四次会议闭幕", star: false,
+          s: "全国政协十四届四次会议闭幕（两会 3 月 4 日—12 日举行，政协先于人大闭幕）。",
+          p: "两会闭幕顺序：政协先闭幕、人大后闭幕。",
+          c: "闭幕日 3 月 10 日为按两会会期（3 月 4 日—12 日）与往年惯例推断，尚未逐日核对到官方原文，引用时留意。",
+          src: "毕马威《2026 年两会要点解读》", url: "https://launch.kpmg.com/content/dam/kpmgsites/cn/pdf/zh/2026/03/key-points-of-the-two-sessions-in-2026-an-interpretation.pdf.coredownload.inline.pdf" },
+        { d: "12", t: "十四届全国人大四次会议闭幕，批准「十五五」规划纲要、通过三部法律", star: false,
+          s: "大会批准政府工作报告、「十五五」规划纲要等，通过生态环境法典、民族团结进步促进法、国家发展规划法：生态环境法典自 2026 年 8 月 15 日起施行，民族团结进步促进法自 2026 年 7 月 1 日起施行，国家发展规划法自公布之日起施行；纲要共 7 万余字、18 篇 62 章，含 20 项主要指标、16 方面重大战略任务、109 项重大工程项目，草案经 48 处修改。",
+          p: "三部法律的名称与施行日期必考；纲要结构数字（18 篇 62 章、20 项指标、109 项工程）成套记忆。",
+          src: "新华社（生态环境部转载）", url: "https://www.mee.gov.cn/ywdt/szyw/202603/t20260312_1146449.shtml" },
+        { d: "18", t: "习近平会见土库曼斯坦民族领袖别尔德穆哈梅多夫", star: false,
+          s: "习近平会见来华访问的土库曼斯坦民族领袖、人民委员会主席别尔德穆哈梅多夫，倡导打造中土全方位合作新格局，推进「鲁班工坊、中医药中心、互设文化中心」等务实合作。",
+          p: "中土关系；「鲁班工坊」等中国合作名片。",
+          src: "央视网《中南海月刊（2026.3）》", url: "https://news.cctv.com/tiantianxuexi/znhyk/2026/sanyue/index.shtml" },
+        { d: "23", t: "习近平在雄安新区考察并主持召开座谈会", star: false,
+          s: "两会后首次地方考察来到雄安新区，习近平在华能集团、北京四中雄安校区等地考察，主持召开座谈会，要求推动更多科创成果转化落地、营造风清气正的政治生态。",
+          p: "雄安新区「千年大计」、科创成果转化；两会后首次地方考察地点。",
+          src: "央视网《中南海月刊（2026.3）》", url: "https://news.cctv.com/tiantianxuexi/znhyk/2026/sanyue/index.shtml" },
+        { d: "24", t: "博鳌亚洲论坛 2026 年年会举行", star: false,
+          s: "博鳌亚洲论坛 2026 年年会 3 月 24 日至 27 日在海南博鳌举行，主题「塑造共同未来：新形势、新机遇、新合作」，是论坛成立 25 周年，也是海南自贸港全岛封关运作后首次年会，60 多个国家和地区约 2000 名代表参会。",
+          p: "博鳌年会主题、25 周年、海南自贸港封关后首次，三个点成套考。",
+          src: "人民日报英文版", url: "https://en.people.cn/n3/2026/0319/c90000-20437694.html" },
+        { d: "31", t: "「十五五」规划纲要正式发布", star: false,
+          s: "新华社发布「『十五五』规划纲要编制记」，回顾从二十届四中全会通过规划建议到全国人大批准纲要的全过程；7 万余字的纲要已正式发布。",
+          p: "十五五纲要编制程序全链条：四中全会《建议》→ 国务院拟订 → 政治局讨论 → 人大批准。",
+          src: "新华社", url: "https://news.qq.com/rain/a/20260331A01TLX00" }
+      ];
+
+      var APR = [
+        { d: "07", t: "全国服务业大会在北京召开", star: false,
+          s: "4 月 7 日至 8 日，全国服务业大会在北京召开，这是新时代首次聚焦服务业而举办的全国性大会。",
+          p: "「新时代首次」表述；服务消费、服务业高质量发展是十五五扩大内需的重要抓手。",
+          src: "央视网《中南海月刊（2026.4）》", url: "http://big5.cctv.com/gate/big5/news.cctv.com/tiantianxuexi/znhyk/2026/siyue/index.shtml" },
+        { d: "10", t: "习近平会见中国国民党访问团", star: false,
+          s: "习近平在北京会见郑丽文主席率领的中国国民党访问团。",
+          p: "两岸关系、国共交流；国民党主席姓名（郑丽文）。",
+          src: "央视网《中南海月刊（2026.4）》", url: "http://big5.cctv.com/gate/big5/news.cctv.com/tiantianxuexi/znhyk/2026/siyue/index.shtml" },
+        { d: "11", t: "中国（内蒙古）自由贸易试验区揭牌", star: false,
+          s: "4 月 11 日，中国（内蒙古）自由贸易试验区揭牌，进一步完善国家开放格局。",
+          p: "自贸试验区扩围，新设的是内蒙古自贸区。",
+          src: "央视网《中南海月刊（2026.4）》", url: "http://big5.cctv.com/gate/big5/news.cctv.com/tiantianxuexi/znhyk/2026/siyue/index.shtml" },
+        { d: "13", t: "第六届中国国际消费品博览会举办", star: false,
+          s: "第六届中国国际消费品博览会 4 月 13 日至 18 日举办，60 多个国家和地区的超 3400 个品牌参展，参展国际展品占比 65%。",
+          p: "消博会届次（第六届）、举办地海南与自贸港的关联。",
+          src: "央视网《中南海月刊（2026.4）》", url: "http://big5.cctv.com/gate/big5/news.cctv.com/tiantianxuexi/znhyk/2026/siyue/index.shtml" },
+        { d: "14", t: "习近平会见西班牙首相桑切斯", star: false,
+          s: "习近平在人民大会堂会见来华正式访问的西班牙首相桑切斯（四年内第四次访华）；同月，越共中央总书记、国家主席苏林将中国作为就任国家主席后的首次出访地，阿联酋阿布扎比王储哈立德、莫桑比克总统查波首次访华。",
+          p: "4 月密集元首外交、中欧／周边外交；桑切斯「四年内第四次访华」。",
+          src: "央视网《中南海月刊（2026.4）》", url: "http://big5.cctv.com/gate/big5/news.cctv.com/tiantianxuexi/znhyk/2026/siyue/index.shtml" },
+        { d: "15", t: "第 139 届广交会开幕", star: false,
+          s: "第 139 届中国进出口商品交易会 4 月 15 日开幕，超 3.2 万家企业参展，创历史新高。",
+          p: "广交会届次与参展规模；与 10 月第 140 届（创办 70 周年）成对记忆。",
+          src: "央视网《中南海月刊（2026.4）》", url: "http://big5.cctv.com/gate/big5/news.cctv.com/tiantianxuexi/znhyk/2026/siyue/index.shtml" },
+        { d: "16", t: "一季度 GDP 同比增长 5.0%", star: false,
+          s: "国家统计局数据：经初步核算，一季度国内生产总值 334193 亿元，按不变价格计算，同比增长 5.0%。",
+          p: "一季度经济「成绩单」：334193 亿元、+5.0%；与上半年 4.7%、前三季度 4.6% 连成增速线。",
+          src: "国家统计局 / 央视网《中南海月刊（2026.4）》", url: "http://big5.cctv.com/gate/big5/news.cctv.com/tiantianxuexi/znhyk/2026/siyue/index.shtml" },
+        { d: "19", t: "第二批「两重」建设项目清单下达", star: false,
+          s: "国家发展改革委下达 2026 年第二批「两重」建设项目清单，共安排超长期特别国债资金 2168 亿元支持 336 个重大项目；今年累计安排「两重」建设资金 6065 亿元，占全年 8000 亿元。",
+          p: "「两重」建设（国家重大战略实施和重点领域安全能力建设）、超长期特别国债的用途与规模。",
+          src: "新华社（宁夏日报转载）", url: "" },
+        { d: "23", t: "习近平就「义乌发展经验」作出重要指示", star: false,
+          s: "习近平近日作出重要指示，强调把「义乌发展经验」总结好运用好；义乌小商品闯出大市场，2025 年外贸出口额居全国县（市、区）首位。",
+          p: "县域经济、改革创新、基层首创精神，申论可作地方治理素材。",
+          src: "新华社（宁夏日报转载）", url: "" },
+        { d: "28", t: "中央政治局会议分析研究当前经济形势和经济工作", star: true,
+          s: "中共中央政治局 4 月 28 日召开会议，分析研究当前经济形势和经济工作，肯定首季度「成绩单」，认为中国经济起步有力，「主要指标好于预期，彰显强大韧性和活力」。",
+          p: "4 月政治局会议是每年一季度经济定调会；定调表述要记原话。",
+          src: "新华社 / 央视网《中南海月刊（2026.4）》", url: "http://big5.cctv.com/gate/big5/news.cctv.com/tiantianxuexi/znhyk/2026/siyue/index.shtml" },
+        { d: "30", t: "十四届全国人大常委会第二十二次会议闭幕，通过修订《监狱法》《社会救助法》", star: false,
+          s: "十四届全国人大常委会第二十二次会议闭幕，表决通过修订后的《监狱法》和《社会救助法》，习近平签署主席令公布；同时任命张柱为农业农村部部长、张承忠为应急管理部部长，并批准中国与中亚五国永久睦邻友好合作条约等。",
+          p: "新修两部法律的名称；常考「哪次常委会通过了哪部法」。",
+          src: "新华社英文版", url: "https://english.news.cn/20260430/89a5c18177ac44d7998633aece0595a3/c.html" }
+      ];
+
+      var MAY = [
+        { d: "09", t: "国务院常务会议研究地方政府债务风险化解，通过《矿产资源法实施条例（草案）》", star: false,
+          s: "李强主持国务院常务会议，学习贯彻习近平有关重要讲话精神，研究推进地方政府债务风险化解有关工作，审议通过《中华人民共和国矿产资源法实施条例（草案）》。",
+          p: "化债、矿产资源安全保障两个政策点。",
+          src: "新华社（湖南日报转载）", url: "" },
+        { d: "09", t: "2026 年医保目录及商保创新药目录调整方案发布", star: false,
+          s: "国家医保局发布《2026 年国家基本医疗保险、生育保险和工伤保险药品目录及商业健康保险创新药目录调整工作方案》，11 月底前发布新版医保药品目录。",
+          p: "医保目录动态调整；商保创新药目录是 2026 年新设，与 11 月 14 日新版目录发布首尾呼应。",
+          src: "新华社（湖南日报转载）", url: "" },
+        { d: "11", t: "天舟十号货运飞船发射成功", star: false,
+          s: "5 月 11 日 8 时 14 分，长征七号遥十一运载火箭托举天舟十号在文昌升空，约 10 分钟后进入预定轨道，载近 6.2 吨补给物资，将在轨停靠 12 个月；天舟货运飞船实现「十战十捷」。",
+          p: "天舟十号、「十战十捷」、在轨停靠 12 个月创纪录。",
+          src: "新华社", url: "https://news.qq.com/rain/a/20260511A08VEU00" },
+        { d: "12", t: "习近平会见塔吉克斯坦总统拉赫蒙", star: false,
+          s: "习近平在北京人民大会堂同来华国事访问的塔吉克斯坦总统拉赫蒙举行会谈。",
+          p: "中塔关系、周边／中亚外交。",
+          src: "央视网《中南海月刊（2026.5）》", url: "https://news.cctv.com/tiantianxuexi/znhyk/2026/wuyue/index.shtml" },
+        { d: "14", t: "习近平同美国总统特朗普会谈，构建「中美建设性战略稳定关系」", star: true,
+          s: "5 月 13 日至 15 日，美国总统特朗普对中国进行国事访问；5 月 14 日上午，习近平在人民大会堂同特朗普举行会谈，双方赞同将构建「中美建设性战略稳定关系」作为中美关系新定位，习近平强调「2026 年成为中美关系继往开来的历史性、标志性年份」，双方要做伙伴而不是对手；这是美国总统时隔 9 年再次访华，也是两国元首继 2025 年 10 月釜山之后再次面对面会晤。",
+          p: "2026 年最重要外交事件：新定位全称必背；与 9 月 24 日习近平访美联考「半年内互访」。",
+          src: "新华社（桂林日报转载）", url: "https://epaper.guilinlife.com/glrbh5/glrb/20260515/Page09BC.htm" },
+        { d: "16", t: "《求是》发表习近平《做强做优做大实体经济》", star: false,
+          s: "5 月 16 日出版的第 10 期《求是》杂志发表习近平重要文章《做强做优做大实体经济》。",
+          p: "实体经济、制造业立国；《求是》文章标题类考点。",
+          src: "央视网《中南海月刊（2026.5）》", url: "https://news.cctv.com/tiantianxuexi/znhyk/2026/wuyue/index.shtml" },
+        { d: "20", t: "习近平会见俄罗斯总统普京", star: false,
+          s: "习近平在北京人民大会堂同来华国事访问的俄罗斯总统普京举行会谈，会谈后签署并发表《中华人民共和国和俄罗斯联邦关于进一步加强全面战略协作、深化睦邻友好合作的联合声明》；习近平强调中俄成为「世界百年变局中的关键恒量」。",
+          p: "中俄全面战略协作、「关键恒量」表述；联合声明全名。",
+          src: "央视网《中南海月刊（2026.5）》", url: "https://news.cctv.com/tiantianxuexi/znhyk/2026/wuyue/index.shtml" },
+        { d: "23", t: "习近平复信「共航蔚蓝：中美青年友谊行」两国青年学子", star: false,
+          s: "习近平给参与「共航蔚蓝：中美青年友谊行」活动的两国青年学子复信，勉励青年为中美友谊作贡献。",
+          p: "中美青年交流；活动名称「共航蔚蓝」。",
+          src: "央视网《中南海月刊（2026.5）》", url: "https://news.cctv.com/tiantianxuexi/znhyk/2026/wuyue/index.shtml" },
+        { d: "24", t: "神舟二十三号载人飞船发射成功", star: false,
+          s: "5 月 24 日，搭载神舟二十三号载人飞船的长征二号 F 遥二十三运载火箭在酒泉点火发射，航天员朱杨柱、张志远、黎家盈（首位香港土生土长的航天员）进入太空，25 日凌晨成功对接天和核心舱；这是「十五五」开局之年首次载人飞行任务。",
+          p: "神舟二十三号乘组名单、首位香港航天员黎家盈，两个点都爱考。",
+          src: "新华社（桂林日报转载）", url: "https://epaper.guilinlife.com/glrbpc/glrb/20260526/06.pdf" },
+        { d: "25", t: "习近平为塞尔维亚总统武契奇举行「友谊勋章」颁授仪式", star: false,
+          s: "5 月 24 日，武契奇开启就任总统以来对我国的首次国事访问；5 月 25 日，习近平为武契奇举行「友谊勋章」颁授仪式。",
+          p: "「友谊勋章」是我国对外最高荣誉勋章；中塞关系。",
+          src: "央视网《中南海月刊（2026.5）》", url: "https://news.cctv.com/tiantianxuexi/znhyk/2026/wuyue/index.shtml" }
+      ];
+
+      var JUN = [
+        { d: "01", t: "《求是》发表习近平《前瞻布局和发展未来产业》", star: false,
+          s: "6 月 1 日出版的第 11 期《求是》杂志发表习近平重要文章《前瞻布局和发展未来产业》。",
+          p: "未来产业、新质生产力；与 1 月政治局集体学习（未来产业主题）联考。",
+          src: "新华社（人民日报转载）", url: "https://rmrb.shangan.tech/archive/2026-06-01.html" },
+        { d: "08", t: "习近平对朝鲜进行国事访问", star: true,
+          s: "6 月 8 日至 9 日，习近平时隔七年再次对朝鲜进行国事访问，朝方以「最隆重礼遇欢迎最尊贵客人」相迎；习近平指出「构建人类命运共同体，首先要从亚洲做起」。",
+          p: "中朝关系、「时隔七年」；引文「首先要从亚洲做起」。",
+          src: "央视网《中南海月刊（2026.6）》", url: "https://news.cctv.com/tiantianxuexi/znhyk/2026/liuyue/index.shtml" },
+        { d: "15", t: "全国党建工作座谈会在北京召开", star: false,
+          s: "在中国共产党成立 105 周年之际，全国党建工作座谈会 6 月 15 日在北京召开，对学习贯彻习近平党建思想作出重要部署。",
+          p: "习近平党建思想、建党 105 周年两个背景点。",
+          src: "央视网《中南海月刊（2026.6）》", url: "https://news.cctv.com/tiantianxuexi/znhyk/2026/liuyue/index.shtml" },
+        { d: "16", t: "习近平会见缅甸总统敏昂莱", star: false,
+          s: "习近平会见今年 4 月就任总统以来首次访华的缅甸总统敏昂莱，指出中缅胞波情谊深厚，中国「将发展对缅关系置于周边外交重要位置」。",
+          p: "中缅关系、周边外交；「胞波情谊」是中缅专属表述。",
+          src: "央视网《中南海月刊（2026.6）》", url: "https://news.cctv.com/tiantianxuexi/znhyk/2026/liuyue/index.shtml" },
+        { d: "24", t: "习近平在山东德州考察", star: false,
+          s: "6 月 24 日，习近平前往山东省德州市陵城区边临镇东于架村，同种粮大户、农机手、农技人员亲切交流；农业农村部数据显示，截至 6 月 24 日全国夏粮小麦收获进度已达 97%。",
+          p: "粮食安全、夏粮丰收、「三夏」生产；考察地点细到村一级，常作干扰项。",
+          src: "央视网《中南海月刊（2026.6）》", url: "https://news.cctv.com/tiantianxuexi/znhyk/2026/liuyue/index.shtml" },
+        { d: "26", t: "十四届全国人大常委会第二十三次会议闭幕，通过修订《商标法》《注册会计师法》", star: false,
+          s: "会议表决通过新修订的《商标法》和关于修改《注册会计师法》的决定，均自 2027 年 1 月 1 日起施行；批准 2025 年中央决算；免去关志鸥的自然资源部部长职务。",
+          p: "两部法律修订时间与施行日期（2027 年 1 月 1 日）必考；《商标法》为全面修订。",
+          src: "新华社（人民日报英文版转载）", url: "http://en.people.cn/n3/2026/0627/c90000-20471858.html" },
+        { d: "26", t: "习近平会见柬埔寨人民党主席洪森、孟加拉国总理塔里克", star: false,
+          s: "6 月 26 日，习近平同日分别会见柬埔寨人民党主席、参议院主席洪森和孟加拉国总理塔里克。",
+          p: "中柬、中孟关系；洪森的双重身份（人民党主席、参议院主席）。",
+          src: "央视网《中南海月刊（2026.6）》", url: "https://news.cctv.com/tiantianxuexi/znhyk/2026/liuyue/index.shtml" },
+        { d: "30", t: "中央政治局会议研究部署防汛抗旱工作", star: false,
+          s: "中共中央政治局 6 月 30 日召开会议，研究部署防汛抗旱工作，指出今年主汛期我国极端天气气候事件仍将偏多、旱涝并重，要求树牢底线思维、极限思维，立足防大汛、抗大旱、防强台风。",
+          p: "防汛抗旱、防灾减灾；与 7 月广西等地灾情、8 月吉隆泥石流构成全年防汛线。",
+          src: "中国政府网（新华社）", url: "https://www.gov.cn/yaowen/liebiao/202606/content_7073773.htm" },
+        { d: "30", t: "《习近平党建文选》《习近平外交文选》出版发行（6 月）", star: false,
+          s: "《习近平党建文选》第一卷、第二卷出版，收入 2012 年 11 月至 2026 年 2 月期间关于党的建设的著作 102 篇；《习近平外交文选》第一卷、第二卷出版，收入 2013 年 1 月至 2025 年 11 月期间关于对外工作的著作 134 篇。",
+          p: "两部文选的卷数、时间跨度与篇数（102 篇 / 134 篇）成对记忆。",
+          c: "央视网 6 月月刊只列为当月出版物、未给具体日期，此处日期按 6 月末归集，不宜作为精确日期引用。",
+          src: "央视网《中南海月刊（2026.6）》", url: "https://news.cctv.com/tiantianxuexi/znhyk/2026/liuyue/index.shtml" }
+      ];
+
+      var JUL = [
+        { d: "01", t: "庆祝中国共产党成立 105 周年大会举行", star: false,
+          s: "7 月 1 日，庆祝中国共产党成立 105 周年大会在北京人民大会堂隆重举行，习近平发表重要讲话，系统总结党百余年奋斗历史经验，深刻道出「中国共产党为什么能」的关键密码，并向「七一勋章」获得者颁授勋章。",
+          p: "建党 105 周年是 2026 年标志性年份（1921+105=2026），讲话要点必考。",
+          src: "央视网《中南海月刊（2026.7）》", url: "https://news.cctv.com/tiantianxuexi/znhyk/2026/qiyue/index.shtml" },
+        { d: "08", t: "国家科学技术奖励大会等四会同日召开", star: false,
+          s: "7 月 8 日上午，国家科学技术奖励大会、中国科学院第二十二次院士大会和中国工程院第十八次院士大会、中国科学技术协会第十一次全国代表大会在北京人民大会堂隆重召开，习近平出席并发表重要讲话。",
+          p: "科技奖励大会与两院院士大会、科协大会同日召开的规格；各会议届次数字。",
+          src: "央视网《中南海月刊（2026.7）》", url: "https://news.cctv.com/tiantianxuexi/znhyk/2026/qiyue/index.shtml" },
+        { d: "10", t: "长征十号乙首飞成功，我国首次实现运载火箭一子级可控回收", star: false,
+          s: "7 月 10 日 12 时 15 分，长征十号乙在海南商业航天发射场发射升空，将卫星送入预定轨道，火箭一子级垂直返回，在海上回收平台通过网系捕获方式成功回收；这是我国首次成功实施运载火箭一子级可控回收，也是全球首次运载火箭海上网系回收。",
+          p: "可重复使用火箭里程碑：「首次可控回收＋全球首次海上网系回收」双第一，与 8 月朱雀三号陆上回收对照记。",
+          src: "新华社", url: "https://news.qq.com/rain/a/20260711A07Q4C00" },
+        { d: "11", t: "广西贵港抗洪抢险", star: false,
+          s: "7 月上旬广西等地因降雨大风接连发生水库溃坝、山体滑坡等灾情；7 月 11 日，广西贵港市民群众涌上街头，欢送各地驰援贵港的抗洪抢险救援队伍。",
+          p: "2026 年汛期防汛抗洪救灾线，与 6 月 30 日政治局会议部署、9 月新华社纪实联考。",
+          src: "央视网《中南海月刊（2026.7）》 / 新华社", url: "https://news.cctv.com/tiantianxuexi/znhyk/2026/qiyue/index.shtml" },
+        { d: "15", t: "上半年 GDP 同比增长 4.7%", star: false,
+          s: "国家统计局发布：上半年国内生产总值 695704 亿元，按不变价格计算同比增长 4.7%，其中一季度增长 5.0%、二季度增长 4.3%；上半年 GDP 增量 3.6 万亿元，为近五年同期最大增量。",
+          p: "半年报数字：4.7%、695704 亿元、增量 3.6 万亿元。",
+          src: "国家统计局", url: "https://www.stats.gov.cn/sj/zxfb/202607/t20260715_1964121.html" },
+        { d: "15", t: "习近平在上海考察", star: false,
+          s: "7 月 15 日，习近平在上海考察，途中专门强调防汛抗洪救灾工作（据新华社防汛抗洪救灾纪实与《求是》刊文提及）。",
+          p: "上海考察与防汛部署结合；次日开启的上海之行还连着世界人工智能大会。",
+          src: "新华社防汛抗洪救灾纪实", url: "https://www.news.cn/politics/leaders/20260914/ac62bfed64464af7b0a55333e7202b9e/c.html" },
+        { d: "17", t: "2026 世界人工智能大会开幕，习近平发表主旨讲话", star: false,
+          s: "7 月 17 日上午，2026 世界人工智能大会暨人工智能全球治理高级别会议在上海世界会客厅开幕，习近平出席开幕式并发表主旨讲话；7 月 16 日至 17 日，习近平在上海分别会见哈萨克斯坦总统托卡耶夫、泰国总理阿努廷、柬埔寨首相洪玛奈和联合国秘书长古特雷斯。",
+          p: "人工智能全球治理、上海 WAIC；习近平出席并发表主旨讲话的规格。",
+          src: "央视网《中南海月刊（2026.7）》", url: "https://news.cctv.com/tiantianxuexi/znhyk/2026/qiyue/index.shtml" },
+        { d: "24", t: "中共中央召开党外人士座谈会", star: false,
+          s: "7 月 24 日，中共中央在中南海召开党外人士座谈会，就当前经济形势和下半年经济工作听取各民主党派中央、全国工商联负责人和无党派人士代表的意见建议，习近平主持并发表重要讲话。",
+          p: "党外人士座谈会是 7 月政治局会议（定下半年经济工作）前的例行程序，两个会成对记。",
+          src: "新华社（衡阳日报转载）", url: "" },
+        { d: "30", t: "中央政治局会议决定 10 月召开二十届五中全会，部署下半年经济工作", star: true,
+          s: "中共中央政治局 7 月 30 日召开会议，决定今年 10 月在北京召开二十届五中全会，主要议程是政治局向中央委员会报告工作、研究持之以恒推进全面从严治党若干重大问题；会议同时分析研究当前经济形势，部署下半年经济工作，强调宏观政策发力提效、及时谋划出台务实管用的增量政策、加大逆周期调节力度。",
+          p: "双考点：五中全会议题（全面从严治党）＋下半年经济定调；与 10 月五中全会本身首尾呼应。",
+          src: "新华社（Sinocism 转载全文）", url: "https://sinocism.com/p/july-2026-politburo-meeting-fifth" }
+      ];
+
+      var AUG = [
+        { d: "01", t: "《求是》发表习近平《加快建设健康中国》", star: false,
+          s: "8 月 1 日出版的第 15 期《求是》杂志发表习近平重要文章《加快建设健康中国》，指出「到 2035 年建成健康中国」，「十五五」是实现这一目标的关键时期。",
+          p: "健康中国 2035 目标、十五五关键期；与作者本职（医疗）相关的申论素材。",
+          src: "央视网《中南海月刊（2026.8）》", url: "https://news.cctv.com/tiantianxuexi/znhyk/2026/bayue/index.shtml" },
+        { d: "15", t: "《生态环境法典》开始施行，第四个全国生态日", star: false,
+          s: "2026 年 8 月 15 日是第四个全国生态日，也是《中华人民共和国生态环境法典》开始施行的日子（该法典 3 月 12 日由十四届全国人大四次会议通过）。",
+          p: "生态环境法典施行日与全国生态日（8 月 15 日）同日，必考；注意通过日（3 月 12 日）与施行日别混。",
+          src: "央视网《中南海月刊（2026.8）》", url: "https://news.cctv.com/tiantianxuexi/znhyk/2026/bayue/index.shtml" },
+        { d: "17", t: "纪念江泽民同志诞辰 100 周年大会举行", star: false,
+          s: "8 月 17 日上午，纪念江泽民同志诞辰 100 周年大会在北京隆重举行。",
+          p: "江泽民诞辰 100 周年（1926+100=2026）纪念活动。",
+          src: "央视网《中南海月刊（2026.8）》", url: "https://news.cctv.com/tiantianxuexi/znhyk/2026/bayue/index.shtml" },
+        { d: "17", t: "前 7 个月新动能对规上工业增长贡献率首次过半", star: false,
+          s: "国家统计局 8 月 17 日发布国民经济运行数据：今年前 7 个月，新动能对规模以上工业增长的贡献率为 50.9%，首次扛起「半壁江山」。",
+          p: "新动能、新质生产力的数据考点：50.9%、「首次过半」。",
+          src: "央视网《中南海月刊（2026.8）》", url: "https://news.cctv.com/tiantianxuexi/znhyk/2026/bayue/index.shtml" },
+        { d: "19", t: "朱雀三号发射成功，我国首次实现火箭一子级陆上回收", star: false,
+          s: "8 月 19 日 7 时 35 分，朱雀三号 Y2 火箭在东风商业航天创新试验区发射，一子级成功回收，任务圆满成功；这是我国首次陆上回收运载火箭一子级，也是首次采用着陆腿方式回收。",
+          p: "与 7 月 10 日长征十号乙对照记：海上网系回收 vs 陆上着陆腿回收。",
+          src: "新华社英文版（光明网英文转载）", url: "https://en.gmw.cn/2026-08/19/content_38950704.htm" },
+        { d: "19", t: "《全民医疗保障「十五五」规划》发布", star: false,
+          s: "8 月 19 日，《全民医疗保障「十五五」规划》发布，描绘未来 5 年全民医保发展图景。",
+          p: "医保十五五规划；与 8 月 28 日《医疗保障法》通过、11 月医保目录发布连成医保线。",
+          src: "央视网《中南海月刊（2026.8）》", url: "https://news.cctv.com/tiantianxuexi/znhyk/2026/bayue/index.shtml" },
+        { d: "25", t: "中办、国办印发《关于推进绿色低碳转型加强全国碳市场建设的意见》", star: false,
+          s: "8 月 25 日，中共中央办公厅、国务院办公厅《关于推进绿色低碳转型加强全国碳市场建设的意见》对外公布：到 2027 年全国碳排放权交易市场基本覆盖工业领域主要排放行业，到 2030 年基本建成以配额总量控制为基础的全国碳排放权交易市场。",
+          p: "「双碳」、全国碳市场建设的两个目标年份（2027 / 2030）。",
+          src: "新华社（权威快报）", url: "" },
+        { d: "26", t: "西藏吉隆泥石流灾害发生", star: false,
+          s: "8 月 26 日 10 时 30 分许，因尼泊尔一侧发生泥石流灾害（高山冰崩引发），造成西藏日喀则市吉隆县吉隆口岸重大人员伤亡、失联；截至 8 月 27 日 8 时，成功搜救出 2 人，排查发现遇难 3 人、失联 558 人。",
+          p: "重大自然灾害应急救援；失联 558 人的数字与次日政治局会议部署联考。",
+          src: "新华社（海口日报转载）", url: "https://szb.hkwb.net/epaper/xml/hkrb/20260828/A07B20260828C.pdf" },
+        { d: "28", t: "中央政治局会议研究部署吉隆泥石流灾害抢险救援", star: false,
+          s: "8 月 28 日，习近平主持召开中共中央政治局会议，研究部署吉隆县泥石流灾害抢险救援工作。",
+          p: "以政治局会议规格部署单项灾害救援，凸显重视程度。",
+          src: "央视网《中南海月刊（2026.8）》 / 新华社", url: "https://news.cctv.com/tiantianxuexi/znhyk/2026/bayue/index.shtml" },
+        { d: "28", t: "《医疗保障法》通过，自 2027 年 1 月 1 日起施行", star: true,
+          s: "十四届全国人大常委会第二十四次会议 8 月 28 日表决通过《中华人民共和国医疗保障法》，共 7 章 56 条，自 2027 年 1 月 1 日起施行；这是我国医保领域首部基础性、专门性法律。",
+          p: "2026 年最重要的民生立法：7 章 56 条、施行日、「首部基础性专门性法律」三个点必考。",
+          src: "新华社（晋城市政府转载）", url: "https://www.jcgov.gov.cn/dtxx/gwyyw/202608/t20260829_2385630.shtml" },
+        { d: "30", t: "习近平启程出席 2026 年上合组织峰会并对吉尔吉斯斯坦国事访问", star: false,
+          s: "当地时间 8 月 30 日下午，习近平乘专机抵达比什凯克，应吉尔吉斯斯坦总统扎帕罗夫邀请，出席 2026 年上海合作组织峰会并对吉尔吉斯斯坦进行国事访问（8 月 30 日至 9 月 2 日行程还包括对埃及国事访问）。",
+          p: "上合峰会的前置节点，峰会本身见 9 月 1 日条目。",
+          src: "央视网《中南海月刊（2026.8）》 / 新华社", url: "https://news.cctv.com/tiantianxuexi/znhyk/2026/bayue/index.shtml" }
+      ];
+
+      var SEP = [
+        { d: "01", t: "上合组织成员国元首理事会第二十六次会议在比什凯克举行", star: false,
+          s: "当地时间 9 月 1 日上午，上海合作组织成员国元首理事会第二十六次会议在比什凯克幸福宫拉开帷幕，正值上合组织成立 25 周年；习近平用 3 个「最」概括 25 年历程；会议发表《上海合作组织二十五周年比什凯克宣言》，通过《上合组织未来 10 年（2026—2035 年）发展战略》等文件，轮值主席国移交巴基斯坦（2026—2027 年度）。",
+          p: "上合 25 周年、比什凯克宣言、「上海精神」；与 10 月杜尚别总理会议（巴基斯坦接任轮值主席国）衔接。",
+          src: "中国政府网（新华社）", url: "https://www.gov.cn/yaowen/liebiao/202609/content_7080285.htm" },
+        { d: "01", t: "习近平出席「上海合作组织+」会议并发表重要讲话", star: false,
+          s: "当地时间 9 月 1 日下午，习近平在比什凯克出席「上海合作组织+」会议，发表题为《共同倡导平等有序的世界多极化 实现更加公正合理的全球治理》的重要讲话，系统阐释平等有序世界多极化的核心要义。",
+          p: "讲话标题全称、平等有序世界多极化四点要义。",
+          src: "外交部（中国驻德国大使馆转载）", url: "https://de.china-embassy.gov.cn/zgyw/202609/t20260901_12014047.htm" },
+        { d: "01", t: "习近平对埃及进行国事访问", star: false,
+          s: "当地时间 9 月 1 日至 2 日，习近平对埃及进行国事访问（上合峰会后行程，8 月 30 日至 9 月 2 日出访吉尔吉斯斯坦、埃及）。",
+          p: "中埃关系、中东外交；一次出访两国的行程安排。",
+          src: "央视网《中南海月刊（2026.9）》（工人日报转载）", url: "https://www.workercn.cn/c/2026-10-02/8907845.shtml" },
+        { d: "12", t: "金砖国家领导人第十八次会晤在新德里举行", star: false,
+          s: "9 月 12 日至 13 日，习近平赴新德里出席金砖国家领导人第十八次会晤，12 日下午出席第一阶段会议并发表题为《共担时代责任 勇做先锋力量》的重要讲话，宣布中国将于明年接任金砖主席国、主办第十九次会晤；会议通过《金砖国家领导人第十八次会晤新德里宣言》；习近平以「自立自强、风雨同舟、成果丰硕」总结金砖合作机制 20 年成就。",
+          p: "金砖 20 周年、第十八次会晤、新德里宣言、中国明年任主席国，四个点成套考。",
+          src: "新华社（生态环境部转载）", url: "https://www.mee.gov.cn/ywdt/szyw/202609/t20260915_1166229.shtml" },
+        { d: "12", t: "习近平会见印度总理莫迪", star: false,
+          s: "习近平在新德里会见印度总理莫迪，这是继喀山和天津会晤后两人再次双边会晤，中印领导人连续 3 年举行双边会晤。",
+          p: "中印关系从「重启」到「升级」；连续 3 年双边会晤。",
+          src: "新华社（外交部稿）", url: "https://dk.china-embassy.gov.cn/zgwj/202609/t20260913_12021379.htm" },
+        { d: "14", t: "新华社发表 2026 年防汛抗洪救灾纪实", star: false,
+          s: "新华社 9 月 14 日电发表《始终把人民生命安全放在首位——以习近平同志为核心的党中央坚强领导科学指挥 2026 年防汛抗洪救灾纪实》，系统回顾 4 月 28 日政治局集体学习、6 月 30 日政治局会议、7 月上旬广西湖北甘肃灾情、8 月 28 日吉隆泥石流部署等全年防汛线。",
+          p: "申论素材：防汛救灾是 2026 年民生／应急管理主题，可作全年线索串联。",
+          src: "新华社", url: "https://www.news.cn/politics/leaders/20260914/ac62bfed64464af7b0a55333e7202b9e/c.html" },
+        { d: "24", t: "习近平对美国进行国事访问", star: true,
+          s: "当地时间 9 月 24 日上午，美国总统特朗普在白宫举行隆重仪式，热烈欢迎中国国家主席习近平对美国进行国事访问；习近平同特朗普在白宫举行会谈，指出两国元首不到半年时间里实现互访在中美关系史上前所未有，双方经贸团队达成一份新的联合安排，两国元首确认将相互支持办好 2026 年 APEC 领导人非正式会议和二十国集团峰会；习近平时隔 11 年再次对美国进行国事访问。",
+          p: "2026 年中美关系的收官大事件：时隔 11 年、半年内互访，与 5 月 14 日特朗普访华对照记忆。",
+          src: "外交部（中国驻南非大使馆转载）", url: "https://za.china-embassy.gov.cn/zgxw/202609/t20260925_12031112.htm" },
+        { d: "25", t: "习近平向全球发展倡议 5 周年高级别对话会致贺信", star: false,
+          s: "9 月 25 日，习近平向在纽约联合国总部举行的全球发展倡议 5 周年高级别对话会致贺信，表示中国愿同各方一道「携手推动全球发展倡议走深走实」。",
+          p: "全球发展倡议 5 周年；四大全球倡议（发展、安全、文明、治理）要分清。",
+          src: "央视网《中南海月刊（2026.9）》（工人日报转载）", url: "https://www.workercn.cn/c/2026-10-02/8907845.shtml" },
+        { d: "29", t: "中办、国办印发《文化遗产保护传承「十五五」规划》", star: false,
+          s: "中共中央办公厅、国务院办公厅印发《文化遗产保护传承「十五五」规划》，目标到 2030 年完成文化遗产资源全面调查、健全法规制度等。",
+          p: "文化遗产、「十五五」专项规划之一。",
+          c: "本条仅以中新社 2026 年 9 月 29 日帖文为据，未见新华社全文，置信度略低于其他条目。",
+          src: "中新社", url: "https://www.facebook.com/ChinaNewsService/posts/pfbid02hixzy5kVzyXjoyQiQM7QWaNttCr4mM7U3TDSAm7LitXFQb1Z9pyfytXQeZB67D5Zl" },
+        { d: "30", t: "烈士纪念日；庆祝中华人民共和国成立 77 周年招待会", star: false,
+          s: "9 月 30 日是烈士纪念日；当晚，庆祝中华人民共和国成立 77 周年招待会在北京举行，习近平发表重要讲话，强调「实现中华民族伟大复兴势不可挡」。",
+          p: "烈士纪念日（9 月 30 日）、国庆 77 周年；与 10 月 1 日国庆条目衔接。",
+          src: "央视网《中南海月刊（2026.9）》（工人日报转载）", url: "https://www.workercn.cn/c/2026-10-02/8907845.shtml" },
+        { d: "30", t: "「十五五」国家级专项规划密集印发收官（8 月底—9 月）", star: false,
+          s: "截至 8 月 31 日，数十份「十五五」国家级专项规划密集印发，涵盖教育发展、城市更新、扩大消费、美丽中国建设、疾病预防控制、农业农村现代化、可再生能源等领域；9 月 29 日印发的文化遗产保护传承规划是其中之一。",
+          p: "申论要点：「十五五」专项规划体系是理解十五五落地的关键，纲要—专项规划两级结构。",
+          src: "央视网《中南海月刊（2026.8）》", url: "https://news.cctv.com/tiantianxuexi/znhyk/2026/bayue/index.shtml" }
+      ];
+
+      var OCT = [
+        { d: "01", t: "新修订《国防动员法》施行", star: false,
+          s: "十四届全国人大常委会第二十四次会议于 2026 年 8 月 28 日修订通过新《国防动员法》，共 14 章 82 条，自 2026 年 10 月 1 日起施行，首次以法律形式定义「国防动员」，明确平战快速转换、民用资源征收征用与补偿等制度。",
+          p: "新法名称、施行日期（2026-10-01）、通过日期（2026-08-28）、主席令第八十三号；注意与 2010 年旧法（72 条）区分。",
+          src: "新华社 / 中国政府网", url: "https://www.gov.cn/yaowen/liebiao/202608/content_7079440.htm" },
+        { d: "01", t: "中华人民共和国成立 77 周年", star: false,
+          s: "新中国迎来 77 周年华诞。9 月 30 日晚，习近平在庆祝中华人民共和国成立 77 周年招待会上发表重要讲话，总结今年以来党和国家事业新进展，强调对中国式现代化光明前景充满信心。",
+          p: "周年数字题高频：建国 77 周年（1949+77=2026）、中国共产党成立 105 周年、红军长征胜利 90 周年、「十五五」开局之年。",
+          src: "新华社（桂林日报转载）", url: "https://epaper.guilinlife.com/glrbh5/glrb/20261002/Articel03001NR.htm" },
+        { d: "08", t: "中国航天事业创建 70 周年", star: false,
+          s: "1956 年 10 月 8 日国防部第五研究院成立，标志中国航天事业创建，2026 年 10 月 8 日为创建 70 周年。「十五五」规划纲要首次将航天强国纳入 16 个「强国」建设目标。",
+          p: "70 周年数字；航天强国、嫦娥六号月背采样、天问一号、北斗、中国空间站等成就的时序与「首个」表述。",
+          src: "新华社（工信部转载）", url: "https://www.miit.gov.cn/xwfb/szyw/art/2026/art_22b68abb63474cd285faf69a99aca182.html" },
+        { d: "08", t: "《新就业形态劳动者权益保障办法（征求意见稿）》发布", star: false,
+          s: "人社部等部门 10 月 8 日发布征求意见稿（共 54 条），公开征求意见至 11 月 8 日，首次以规章形式将不完全符合确立劳动关系情形的新就业形态劳动者（约 8400 万人）纳入劳动法律制度保障，规范算法管理、劳动报酬、休息、职业伤害保障等，明确停止派单、封禁账号等重大决定不得由算法自动作出。",
+          p: "平台经济治理、算法规制、新就业形态劳动者权益，申论和常识都可能考。",
+          c: "注意：这是征求意见稿，尚未正式施行，不要写成已生效的法律。",
+          src: "人社部发布（新浪财经报道）", url: "https://finance.sina.cn/2026-10-09/detail-iniupxkt4199666.d.html" },
+        { d: "14", t: "习近平向第 140 届广交会致贺信，李强出席开幕式", star: false,
+          s: "10 月 14 日，习近平向第 140 届中国进出口商品交易会致贺信，充分肯定广交会历史成就，重申中国扩大高水平对外开放的坚定决心；同日李强在广州出席开幕式并发表主旨演讲。",
+          p: "广交会创办 70 周年、「中国第一展」、高水平对外开放；贺信类考点常考「重申扩大高水平对外开放」。",
+          src: "新华社（中国经济网转载）", url: "http://www.ce.cn/xwzx/gnsz/szyw/202610/t20261015_3258271.shtml" },
+        { d: "15", t: "第 140 届广交会开展", star: false,
+          s: "第 140 届广交会 10 月 15 日在广州开展，10 月 15 日至 11 月 4 日分三期举办，主题分别为「先进制造」「品质家居」「美好生活」，全程 3 万多家企业参展，约 34 万名境外采购商到会，适逢广交会创办 70 周年。",
+          p: "参展企业 3 万多家、境外采购商约 34 万名；广交会是外贸「晴雨表」「向新、向智、更专更优」。",
+          src: "新华社", url: "http://news.china.com.cn/2026-10/16/content_118735657.shtml" },
+        { d: "19", t: "前三季度 GDP 同比增长 4.6%", star: false,
+          s: "国家统计局 10 月 19 日发布：前三季度国内生产总值 1071071 亿元，按不变价格计算同比增长 4.6%，其中一季度增长 5.0%、二季度 4.3%、三季度 4.5%；前三季度经济增量达 5.7 万亿元，为近五年最大规模。",
+          p: "资料分析/常识必考数字：GDP 总量 1071071 亿元、增速 4.6%、分季度增速；「十五五」开局之年经济「顶压前行、向新向优」。",
+          src: "新华社", url: "https://www.cs.com.cn/xwzx/01/2026/10/20/detail_2026102010045751.html" },
+        { d: "20", t: "上合组织总理理事会第二十五次会议在杜尚别举行", star: false,
+          s: "李强在杜尚别出席上合组织成员国政府首脑（总理）理事会第二十五次会议并发表讲话。2026 年是上合组织成立 25 周年，也是落实上合组织未来 10 年发展战略的开局之年，巴基斯坦接任轮值主席国。",
+          p: "上合组织成立 25 周年、第二十五次总理会议、轮值主席国巴基斯坦；国际组织类考点。",
+          src: "新华社 / 人民日报（网易转载）", url: "https://www.163.com/dy/article/L9OBJUNB0514R9M0.html" },
+        { d: "21", t: "中俄总理第三十一次定期会晤", star: false,
+          s: "10 月 21 日上午，李强在圣彼得堡同俄罗斯总理米舒斯京共同主持中俄总理第三十一次定期会晤，会后签署《中俄总理第三十一次定期会晤联合公报》。2026 年是中俄战略协作伙伴关系建立 30 周年、《中俄睦邻友好合作条约》签署 25 周年。",
+          p: "中俄总理定期会晤机制（第三十一次）、两个周年数字（30 周年、25 周年）。",
+          src: "新华社", url: "http://news.china.com.cn/2026-10/21/content_118742180.shtml" },
+        { d: "21", t: "《中国应对气候变化的政策与行动 2026 年度报告》发布", star: false,
+          s: "生态环境部 10 月 21 日在国新办发布会上发布报告：2025 年我国单位 GDP 二氧化碳排放较 2020 年降低 17.7%，非化石能源消费占比达 21.7%，风电、太阳能发电装机合计 18.4 亿千瓦，森林蓄积量 209.88 亿立方米；到 2026 年年中可再生能源装机达 24.6 亿千瓦，占全国发电总装机 60.7%。",
+          p: "「双碳」目标（2030 年前碳达峰、2060 年前碳中和）、美丽中国建设；17.7%、21.7% 等数字题高频。",
+          src: "新华社", url: "https://www.cs.com.cn/xwzx/01/2026/10/21/detail_2026102110046101.html" },
+        { d: "22", t: "纪念中国工农红军长征胜利 90 周年大会在京举行", star: false,
+          s: "10 月 22 日上午，纪念中国工农红军长征胜利 90 周年大会在北京人民大会堂隆重举行，习近平发表重要讲话，号召大力弘扬伟大长征精神，同心协力走好新的长征路。长征为 1934 年 10 月至 1936 年 10 月，纵横十余省、长驱二万五千里。",
+          p: "常识必考：长征胜利 90 周年（1936+90=2026）、长征精神、遵义会议、长征起止时间；申论可作党史素材。",
+          src: "新华社", url: "https://swt.sc.gov.cn/sccom/bwxx/2026/10/22/ce31a29410a5486581da3b91bc4820fd.shtml" },
+        { d: "23", t: "国务院常务会议研究统筹人口与经济社会发展", star: false,
+          s: "李强 10 月 23 日主持召开国务院常务会议，研究统筹人口与经济社会发展有关工作，提出加快建设生育友好型社会，持续完善婚嫁、生育、养育、教育等政策，优化面向家庭的财税、社保、住房等支持举措，努力稳定新出生人口规模。",
+          p: "人口高质量发展、生育友好型社会、基本公共服务均等化；「十五五」规划纲要亦将稳定新出生人口规模作为目标。",
+          src: "新华社", url: "https://www.cs.com.cn/xwzx/01/2026/10/23/detail_2026102310046834.html" },
+        { d: "26—29", t: "党的二十届五中全会在京举行", star: true,
+          s: "党的二十届五中全会于 10 月 26 日至 29 日在北京举行，听取和讨论习近平受中央政治局委托所作的工作报告，审议通过《中共中央关于持之以恒推进全面从严治党若干重大问题的决定》（全文 11 月 1 日由新华社发布），决定中国共产党第二十一次全国代表大会于 2027 年下半年在北京召开，全会增选张升民为中央政治局委员；全会强调做好岁末年初工作，确保完成今年经济社会发展主要目标任务，实现「十五五」良好开局。",
+          p: "重中之重：全会时间、主题（持之以恒推进全面从严治党）、《决定》名称、二十一大召开时间（2027 年下半年）；注意与二十届四中全会（审议「十五五」规划《建议》）区分记忆。",
+          src: "新华社（中国石油新闻中心转载）", url: "https://news.cnpc.com.cn/system/2026/11/04/030206535.shtml" },
+        { d: "30", t: "中共中央举行新闻发布会解读二十届五中全会精神", star: false,
+          s: "10 月 30 日上午，中共中央举行新闻发布会介绍和解读五中全会精神：全会最重要的成果是审议通过《决定》；中央纪委副书记张福海介绍，党的十八大以来全国纪检监察机关共立案 810.5 万件，处分 792.2 万人，其中处分中管干部 963 人。",
+          p: "反腐败斗争数据（立案 810.5 万件、处分 792.2 万人、中管干部 963 人）、《决定》三大板块结构；与全会公报合并记忆。",
+          src: "新华社（中国石油新闻中心转载）", url: "https://news.cnpc.com.cn/system/2026/11/04/030206536.shtml" }
+      ];
+
+      var NOV = [
+        { d: "02", t: "20 项成果获 2026 年世界互联网大会领先科技奖", star: false,
+          s: "2026 年世界互联网大会领先科技奖颁奖典礼 11 月 2 日在浙江桐乡乌镇举行，20 项成果获奖，包括「九章四号」光量子计算原型机等基础研究 2 项、关键技术 10 项、工程研发 8 项，涵盖量子计算、人工智能、空天信息等前沿领域；今年共征集 43 个国家和地区的 430 余项成果。",
+          p: "「九章四号」光量子计算原型机、科技自立自强；注意与乌镇峰会开幕（11 月 3 日）区分日期。",
+          src: "新华社", url: "https://finance.sina.com.cn/jjxw/2026-11-03/doc-inixmhhe6822586.shtml" },
+        { d: "03", t: "2026 年世界互联网大会乌镇峰会开幕", star: false,
+          s: "11 月 3 日上午，李强在浙江乌镇出席 2026 年世界互联网大会乌镇峰会开幕式并发表主旨演讲。本届峰会主题为「开源开放 共建共享——携手构建网络空间命运共同体」，为第 13 届乌镇峰会，设 27 场分论坛，「互联网之光」博览会有 54 个国家和地区的 670 余家企业参展。",
+          p: "乌镇峰会主题、网络空间命运共同体、人工智能开源开放；申论数字治理素材。",
+          src: "新华社", url: "https://swj.weihai.gov.cn/art/2026/11/4/art_40942_6721106.html" },
+        { d: "03", t: "央行宣布上调外汇存款准备金率至 6%", star: false,
+          s: "中国人民银行 11 月 3 日发布消息，为加强金融机构外汇流动性管理，决定自 2026 年 11 月 15 日起上调金融机构外汇存款准备金率 2 个百分点，由 4% 提高到 6%，为近五年来首次上调，背景是人民币对美元汇率延续升值态势。",
+          p: "宏观审慎工具：外汇存款准备金率上调可收紧境内美元流动性、缓解人民币升值压力；记住宣布日 11 月 3 日与生效日 11 月 15 日两个日期。",
+          src: "新华社 / 央视新闻", url: "https://finance.sina.com.cn/wm/2026-11-15/doc-iniyupuh6553035.shtml" },
+        { d: "06", t: "全国人大常委会闭幕，一次通过四部法律", star: true,
+          s: "十四届全国人大常委会第二十五次会议 11 月 6 日上午闭幕，表决通过《中华人民共和国检察公益诉讼法》《中华人民共和国南极活动与环境保护法》、新修订的《中华人民共和国水法》《中华人民共和国反跨境腐败法》及关于修改突发事件应对法等十五部法律的决定；习近平签署第八十六至九十一号主席令；会议还决定免去李乐成的工业和信息化部部长职务。",
+          p: "法基必考——四部法律与施行日期：检察公益诉讼法 2027 年 1 月 1 日施行；南极活动与环境保护法 2027 年 1 月 1 日施行；新修订水法 2027 年 3 月 22 日施行；反跨境腐败法自公布之日起施行。",
+          src: "新华社", url: "https://news.youth.cn/sz/202611/t20261106_16953319.htm" },
+        { d: "07", t: "神舟二十四号将搭载巴基斯坦航天员", star: false,
+          s: "11 月 7 日，中国载人航天工程办公室宣布，神舟二十四号载人飞行任务将有 1 名巴基斯坦航天员以载荷专家身份参加，在完成短期在轨飞行后随神舟二十三号载人飞船返回。这是中国载人航天工程历史上首次中外航天员联合飞行，中国空间站将迎来首位外籍航天员到访。",
+          p: "「首次中外航天员联合飞行」「首位外籍航天员」、巴基斯坦、载荷专家身份。",
+          c: "注意：任务尚未发射（预计 11 月中下旬），不要写成已发射。",
+          src: "新华社", url: "https://www.sohu.com/a/1098617637_122014422" },
+        { d: "11", t: "我国首款商用级中小型纯太阳能无人机「轻骑兵」首飞成功", star: false,
+          s: "11 月 11 日，我国自主研发的「轻骑兵」中小型太阳能无人机在西北某机场首飞成功，以太阳能为唯一动力源，长 3.2 米、翼展 8 米，最大设计续航时间达 30 小时，填补国内低空中小型纯电动飞行器长航时商用产品空白。",
+          p: "「首款商用级中小型纯太阳能无人机」、30 小时设计续航、低空经济 / 绿色航空。",
+          src: "新华社", url: "https://news.e23.cn/guonei/2026-11-11/2026B1100198.html" },
+        { d: "11", t: "王毅同美国国务卿卢比奥通电话", star: false,
+          s: "11 月 11 日，中共中央政治局委员、外交部长王毅同美国国务卿卢比奥通电话，王毅表示此次通话积极而富有建设性，中国愿同美国加强沟通与合作；通话距深圳 APEC 领导人会议约一周。",
+          p: "中美沟通渠道、APEC 前夕外交铺垫。",
+          c: "本条为引述新华社的二手报道，事实有多源交叉印证，未取得新华社官网原文链接。",
+          src: "新华社（Groupstar Media 引述）", url: "https://groupstarmedia.com/article/d20261111-wangyirubio1.html" },
+        { d: "12", t: "纪念孙中山先生诞辰 160 周年大会在京举行", star: false,
+          s: "11 月 12 日上午，纪念孙中山先生诞辰 160 周年大会在北京人民大会堂隆重举行，习近平发表重要讲话，强调海内外全体中华儿女要更加紧密地团结起来，继承孙中山先生遗志，同心协力共襄中华民族伟大复兴盛举。孙中山先生是伟大的民族英雄、伟大的爱国主义者、中国民主革命的伟大先驱。",
+          p: "常识必考：孙中山诞辰 160 周年（1866+160=2026）、「振兴中华」；中国共产党人是孙中山革命事业最坚定的支持者、最忠诚的合作者、最忠实的继承者。",
+          src: "新华社 / 中国政府网", url: "https://www.gov.cn/yaowen/liebiao/202611/content_7085882.htm" },
+        { d: "13", t: "外交部宣布：习近平将主持深圳 APEC 领导人会议", star: false,
+          s: "外交部发言人 11 月 13 日宣布，习近平将主持亚太经合组织第三十三次领导人非正式会议并发表讲话，会议将于 11 月 18 日至 19 日在深圳举行；APEC 工商领导人峰会将于 11 月 17 日至 18 日在深圳举行。",
+          p: "APEC「中国年」、第三十三次领导人非正式会议、深圳为东道城市。",
+          c: "注意：11 月 13 日只是宣布，领导人会议本身在 11 月 18—19 日举行，不要写成会议已于 11 月 13 日召开。本条为引述外交部的二手报道。",
+          src: "外交部宣布（Groupstar Media 引述）", url: "https://groupstarmedia.com/article/d20261112-gap1930-apec1.html" },
+        { d: "14", t: "2026 年国家医保药品目录和商保创新药目录发布", star: false,
+          s: "11 月 14 日，2026 年国家医保药品目录和商业健康保险创新药品目录在苏州发布：新版医保目录新增 107 种药品，其中一类新药 51 个、再创历史新高，CAR-T、双抗 ADC 等首次纳入医保目录；商保创新药目录新增 12 种；新版目录药品总数达 3331 个，于 2027 年 1 月 1 日起正式实施。",
+          p: "医保惠民、创新药、CAR-T 首进医保；记住 107 种、51 个一类新药、2027 年 1 月 1 日实施。",
+          src: "新华社", url: "https://www.21jingji.com/article/20261115/herald/11cbd8f512ae48ca6a8ce8d7debec153.html" },
+        { d: "15", t: "中共中央印发修订后的《中国共产党地方委员会工作条例》", star: false,
+          s: "新华社 11 月 15 日报道，近日中共中央印发修订后的《中国共产党地方委员会工作条例》，条例于 2026 年 3 月 27 日经中央政治局会议修订、2026 年 11 月 7 日由中共中央发布，自发布之日起施行；条例适用于省、市、县三级地方党委，强化地方党委总揽全局、协调各方的领导作用，落实五中全会部署。",
+          p: "党内法规名称、适用范围（省、市、县三级地方党委）、修订时间线（2015 年旧版 → 2026 年修订）；与五中全会全面从严治党主题联动记忆。",
+          src: "新华社", url: "https://m.jstv.com/news/2026/11/15/1571570909141975040.html" },
+        { d: "16", t: "外交部宣布：11 月 19 日举行中俄美元首会晤", star: false,
+          s: "外交部 11 月 16 日上午宣布，11 月 19 日习近平将同俄罗斯总统普京、美国总统特朗普在深圳举行中俄美元首会晤；此前白宫已确认特朗普将于 11 月 19 日先同习近平举行中美元首双边会晤及工作午宴。",
+          p: "中俄美元首会晤为首次三方元首同桌。",
+          c: "注意：11 月 16 日只是宣布，会晤本身在 11 月 19 日，不要提前写会晤结果。本条为引述外交部的二手报道（香港 01）。",
+          src: "外交部宣布（香港 01 引述）", url: "https://www.hk01.com/%E5%9C%8B%E9%9A%9A%E5%88%86%E6%9E%90/60411325/%E4%B8%AD%E5%9C%8B%E5%96%AE%E7%8D%A8%E5%AE%A3%E4%B8%AD%E4%BF%84%E7%BE%8E%E5%85%83%E9%A6%96%E6%9C%83%E6%99%A4-%E4%B8%8D%E5%9C%A8apec%E8%AD%B0%E7%A8%8B%E4%B8%AD%E6%98%AF%E4%B8%AD%E5%9C%8B%E7%9A%84%E5%88%BB%E6%84%8F%E8%80%8C%E7%82%BA" },
+        { d: "17", t: "APEC 工商领导人峰会在深圳开幕，习近平会见加拿大总理卡尼", star: false,
+          s: "2026 年 APEC 工商领导人峰会于 11 月 17 日至 18 日在深圳前海国际会议中心举办，习近平主席和多位 APEC 经济体领导人出席并发表演讲；11 月 17 日上午，习近平在深圳会见来华出席 APEC 第三十三次领导人非正式会议的加拿大总理卡尼，双方宣布延长并扩大处理双边经贸问题的初步联合安排，互相扩大农渔产品与钢铝产品关税减免。",
+          p: "APEC 工商领导人峰会开幕日（11 月 17 日）、中加经贸关系改善；APEC 领导人非正式会议（11 月 18—19 日）尚未召开，不要提前写结果。",
+          src: "新华社（腾讯新闻转载）", url: "https://news.qq.com/rain/a/20261116A03PWH00" }
+      ];
+
+      function esc(s) {
+        return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      }
+      function renderList(el, items, monthLabel) {
+        var html = "";
+        items.forEach(function (it) {
+          html += '<article class="item">'
+            + '<div class="date-rail"><div class="d">' + esc(it.d) + '</div><div class="m">' + monthLabel + '</div></div>'
+            + '<div><h3>' + esc(it.t) + (it.star ? '<span class="tag-star">★ 本月最重要</span>' : '') + '</h3>'
+            + '<p class="sum">' + esc(it.s) + '</p>'
+            + '<p class="point"><span class="lab">考点</span>' + esc(it.p) + '</p>'
+            + (it.c ? '<p class="caveat">⚠ ' + esc(it.c) + '</p>' : '')
+            + (it.url
+              ? '<p class="src">来源：<a href="' + it.url + '" target="_blank" rel="noopener">' + esc(it.src) + ' ↗</a></p>'
+              : '<p class="src">来源：' + esc(it.src) + '（未取得确切全文链接）</p>')
+            + '</div></article>';
+        });
+        el.innerHTML = html;
+      }
+      renderList(document.getElementById("list-jan"), JAN, "1 月");
+      renderList(document.getElementById("list-feb"), FEB, "2 月");
+      renderList(document.getElementById("list-mar"), MAR, "3 月");
+      renderList(document.getElementById("list-apr"), APR, "4 月");
+      renderList(document.getElementById("list-may"), MAY, "5 月");
+      renderList(document.getElementById("list-jun"), JUN, "6 月");
+      renderList(document.getElementById("list-jul"), JUL, "7 月");
+      renderList(document.getElementById("list-aug"), AUG, "8 月");
+      renderList(document.getElementById("list-sep"), SEP, "9 月");
+      renderList(document.getElementById("list-oct"), OCT, "10 月");
+      renderList(document.getElementById("list-nov"), NOV, "11 月");
+
+      /* ---------- 页签 ---------- */
+      var tabBtns = document.querySelectorAll("nav.tabs button");
+      tabBtns.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          tabBtns.forEach(function (b) { b.classList.remove("active"); });
+          btn.classList.add("active");
+          document.querySelectorAll(".view").forEach(function (v) { v.classList.remove("show"); });
+          document.getElementById("view-" + btn.getAttribute("data-view")).classList.add("show");
+          window.scrollTo({ top: 0 });
+        });
+      });
+    </script>
+    <script>
+      /* ---------- 刷题巩固 ---------- */
+      var BANK = [
+        { q: "2026 年中央一号文件是党的十八大以来第几个指导「三农」工作的中央一号文件？它首次提出的是？",
+          opts: ["第 13 个，首提「高标准农田建设」", "第 14 个，首提「实施常态化精准帮扶」", "第 14 个，首提「千万工程」", "第 15 个，首提「实施常态化精准帮扶」"],
+          a: 1, e: "2026 年中央一号文件《中共中央 国务院关于锚定农业农村现代化 扎实推进乡村全面振兴的意见》2 月 3 日发布，是第 14 个中央一号文件，也是「十五五」首个一号文件，共六部分，首提「实施常态化精准帮扶」。" },
+        { q: "国家统计局 2026 年 1 月 19 日发布：2025 年国内生产总值和增速是？",
+          opts: ["首次突破 130 万亿元，增长 5.2%", "首次突破 140 万亿元，增长 5.0%", "1401879 亿元，增长 4.8%", "首次突破 140 万亿元，增长 5.5%"],
+          a: 1, e: "2025 年 GDP 1401879 亿元，首次突破 140 万亿元，同比增长 5.0%，「十四五」胜利收官；居民人均可支配收入 43377 元。" },
+        { q: "2026 年政府工作报告提出的 GDP 增长预期目标是？",
+          opts: ["5% 左右", "4.5%—5%", "5.5% 左右", "4%—4.5%"],
+          a: 1, e: "2026 年首次用区间目标：GDP 增长 4.5%—5%。同组数字还有：城镇调查失业率 5.5% 左右、城镇新增就业 1200 万人以上、CPI 涨幅 2% 左右、赤字率 4% 左右、超长期特别国债 1.3 万亿元。" },
+        { q: "2026 年 3 月 12 日十四届全国人大四次会议通过的三部法律，不包括下列哪一部？",
+          opts: ["生态环境法典", "民族团结进步促进法", "国家发展规划法", "医疗保障法"],
+          a: 3, e: "3 月 12 日通过的是生态环境法典、民族团结进步促进法、国家发展规划法；《医疗保障法》是 8 月 28 日人大常委会通过的，2027 年 1 月 1 日施行。" },
+        { q: "《中华人民共和国生态环境法典》自何时起施行？这一天还是什么日子？",
+          opts: ["2026 年 7 月 1 日，建党 105 周年", "2026 年 8 月 15 日，第四个全国生态日", "2026 年 3 月 12 日，植树节", "2027 年 1 月 1 日，元旦"],
+          a: 1, e: "生态环境法典 3 月 12 日通过、8 月 15 日施行，施行日正是第四个全国生态日；民族团结进步促进法是 7 月 1 日施行，别混。" },
+        { q: "2026 年 5 月 14 日中美元首会谈，双方赞同将什么作为中美关系新定位？",
+          opts: ["中美新型大国关系", "中美建设性战略稳定关系", "中美全面战略伙伴关系", "中美战略互信关系"],
+          a: 1, e: "特朗普 5 月 13—15 日访华（美国总统时隔 9 年再次访华），双方赞同构建「中美建设性战略稳定关系」；9 月 24 日习近平访美，两国元首不到半年实现互访。" },
+        { q: "神舟二十三号航天员乘组中，首位香港土生土长的航天员是？",
+          opts: ["朱杨柱", "张志远", "黎家盈", "桂海潮"],
+          a: 2, e: "神舟二十三号 2026 年 5 月 24 日发射，乘组为朱杨柱、张志远、黎家盈，黎家盈是首位香港土生土长的航天员；这是「十五五」开局之年首次载人飞行任务。" },
+        { q: "2026 年 7 月 10 日长征十号乙首飞成功，创下的「双第一」是？",
+          opts: ["首次海上发射、首次一箭多星", "我国首次运载火箭一子级可控回收、全球首次运载火箭海上网系回收", "全球首次海上发射、首次垂直回收", "我国首次陆上回收、首次着陆腿回收"],
+          a: 1, e: "长征十号乙一子级在海上回收平台以网系捕获方式回收。陆上＋着陆腿是 8 月 19 日朱雀三号的纪录，两条别记反。" },
+        { q: "国家统计局 2026 年 7 月 15 日发布：上半年国内生产总值同比增长多少？",
+          opts: ["5.0%", "4.3%", "4.7%", "4.6%"],
+          a: 2, e: "上半年 GDP 695704 亿元，同比增长 4.7%（一季度 5.0%、二季度 4.3%），增量 3.6 万亿元为近五年同期最大。前三季度是 4.6%。" },
+        { q: "2026 年 8 月 28 日通过的《中华人民共和国医疗保障法》，说法正确的是？",
+          opts: ["共 7 章 56 条，自 2027 年 1 月 1 日起施行，是我国医保领域首部基础性、专门性法律", "共 14 章 82 条，自 2026 年 10 月 1 日起施行", "自公布之日起施行", "是医保领域第二部专门法律"],
+          a: 0, e: "《医疗保障法》7 章 56 条，2027 年 1 月 1 日施行。14 章 82 条、10 月 1 日施行的是新修订《国防动员法》，是常设的干扰项。" },
+        { q: "2026 年 9 月上合组织峰会在哪里举行？今年是上合组织成立多少周年？",
+          opts: ["杜尚别，25 周年", "比什凯克，25 周年", "比什凯克，20 周年", "阿斯塔纳，25 周年"],
+          a: 1, e: "元首理事会第二十六次会议 9 月 1 日在吉尔吉斯斯坦比什凯克举行，上合组织成立 25 周年，发表《比什凯克宣言》，轮值主席国移交巴基斯坦。杜尚别是 10 月总理会议的地点。" },
+        { q: "2026 年 9 月金砖国家领导人第十八次会晤在哪里举行？习近平宣布了什么？",
+          opts: ["北京，中国将主办上合峰会", "新德里，中国将于明年接任金砖主席国、主办第十九次会晤", "喀山，金砖扩员完成", "约翰内斯堡，中国将主办第十九次会晤"],
+          a: 1, e: "第十八次会晤 9 月 12—13 日在新德里举行，通过《新德里宣言》；今年还是金砖合作机制 20 周年，中国明年接任主席国。" },
+        { q: "2026 年 9 月 24 日习近平对美国进行国事访问，下列说法正确的是？",
+          opts: ["习近平时隔 9 年再次访美", "两国元首不到半年实现互访，在中美关系史上前所未有", "会谈在纽约联合国总部举行", "这是习近平首次对美国进行国事访问"],
+          a: 1, e: "时隔 11 年（不是 9 年；9 年是特朗普访华的间隔），会谈在白宫举行；不到半年互访是中美关系史上首次。" },
+        { q: "2026 年 1 月 12 日开幕的是哪次会议？习近平在会上强调推进全面从严治党。",
+          opts: ["二十届中央纪委五次全会", "二十届五中全会", "中央政治局会议", "全国党建工作座谈会"],
+          a: 0, e: "二十届中央纪委第五次全体会议 1 月 12 日在京开幕。五中全会是 10 月 26—29 日；全国党建工作座谈会是 6 月 15 日。" },
+        { q: "《习近平关于树立和践行正确政绩观论述摘编》2026 年 2 月出版，下列数字正确的是？",
+          opts: ["分 5 个专题，共 200 段论述", "分 7 个专题，共 253 段论述", "分 7 个专题，共 102 篇著作", "分 10 个专题，共 134 篇著作"],
+          a: 1, e: "《论述摘编》分 7 个专题、253 段论述，摘自 150 多篇重要文献；102 篇和 134 篇是 6 月出版的《习近平党建文选》《习近平外交文选》的篇数，别串。" },
+        { q: "2026 年 6 月 26 日人大常委会通过修订的《商标法》和修改《注册会计师法》的决定，两部法律何时施行？",
+          opts: ["2026 年 7 月 1 日", "2026 年 10 月 1 日", "2027 年 1 月 1 日", "自公布之日起"],
+          a: 2, e: "两部都是 2027 年 1 月 1 日施行，和检察公益诉讼法、南极法、医疗保障法、医保目录同一天，是全年最密的施行日。" },
+        { q: "2026 年 7 月 1 日举行的大会，庆祝的是什么？",
+          opts: ["中国共产党成立 100 周年", "中国共产党成立 105 周年", "中华人民共和国成立 77 周年", "江泽民同志诞辰 100 周年"],
+          a: 1, e: "1921+105=2026，庆祝建党 105 周年大会 7 月 1 日在人民大会堂举行，习近平向「七一勋章」获得者颁授勋章。江泽民诞辰 100 周年纪念大会是 8 月 17 日。" },
+        { q: "2026 年 2 月 3 日发布的中央一号文件，全名是？",
+          opts: ["《中共中央 国务院关于学习运用「千村示范、万村整治」工程经验有力有效推进乡村全面振兴的意见》", "《中共中央 国务院关于锚定农业农村现代化 扎实推进乡村全面振兴的意见》", "《中共中央 国务院关于做好 2026 年全面推进乡村振兴重点工作的意见》", "《中共中央 国务院关于实现巩固拓展脱贫攻坚成果同乡村振兴有效衔接的意见》"],
+          a: 1, e: "2026 年一号文件以「锚定农业农村现代化」开篇，是「十五五」首个中央一号文件。" },
+        { q: "2026 年 4 月 16 日发布的一季度 GDP 数据是？",
+          opts: ["334193 亿元，同比增长 5.0%", "334193 亿元，同比增长 4.7%", "695704 亿元，同比增长 5.0%", "1071071 亿元，同比增长 4.6%"],
+          a: 0, e: "一季度 334193 亿元、+5.0%；695704 亿元、+4.7% 是上半年；1071071 亿元、+4.6% 是前三季度。三个数据成套考。" },
+        { q: "2026 年 6 月 8—9 日，习近平时隔多少年再次对朝鲜进行国事访问？",
+          opts: ["五年", "六年", "七年", "十年"],
+          a: 2, e: "时隔七年再次访朝，朝方以「最隆重礼遇欢迎最尊贵客人」相迎；习近平指出构建人类命运共同体「首先要从亚洲做起」。" },
+        { q: "党的二十届五中全会于 2026 年 10 月 26—29 日在北京举行，全会审议通过的文件是？",
+          opts: ["《中共中央关于制定国民经济和社会发展第十五个五年规划的建议》", "《中共中央关于持之以恒推进全面从严治党若干重大问题的决定》", "《中共中央关于进一步全面深化改革、推进中国式现代化的决定》", "《中国共产党地方委员会工作条例》"],
+          a: 1, e: "五中全会的主题就是持之以恒推进全面从严治党，审议通过同名《决定》；「十五五」规划《建议》是 2025 年二十届四中全会通过的，别混。" },
+        { q: "二十届五中全会决定，中国共产党第二十一次全国代表大会将于何时召开？",
+          opts: ["2026 年下半年", "2027 年上半年", "2027 年下半年", "2028 年上半年"],
+          a: 2, e: "全会决定二十一大于 2027 年下半年在北京召开。" },
+        { q: "二十届五中全会增选谁为中央政治局委员？",
+          opts: ["张升民", "张福海", "李乐成", "米舒斯京"],
+          a: 0, e: "全会增选张升民为中央政治局委员。张福海是中央纪委副书记，在 10 月 30 日发布会上介绍反腐数据；李乐成是 11 月 6 日被免去工信部部长职务。" },
+        { q: "国家统计局 2026 年 10 月 19 日发布：前三季度国内生产总值同比增长多少？",
+          opts: ["4.3%", "4.5%", "4.6%", "5.0%"],
+          a: 2, e: "前三季度 GDP 1071071 亿元，同比增长 4.6%；分季度看，一季度 5.0%、二季度 4.3%、三季度 4.5%。" },
+        { q: "2026 年是中华人民共和国成立多少周年？",
+          opts: ["75 周年", "76 周年", "77 周年", "80 周年"],
+          a: 2, e: "1949 + 77 = 2026。同年还有中国共产党成立 105 周年、红军长征胜利 90 周年。" },
+        { q: "2026 年 10 月 22 日在京举行的大会，纪念的是什么事件多少周年？",
+          opts: ["抗日战争胜利 80 周年", "红军长征胜利 90 周年", "遵义会议召开 90 周年", "新中国成立 77 周年"],
+          a: 1, e: "长征 1934 年 10 月至 1936 年 10 月，1936 + 90 = 2026，纪念长征胜利 90 周年大会 10 月 22 日在人民大会堂举行。" },
+        { q: "2026 年 11 月 12 日举行纪念大会的孙中山先生诞辰，今年是多少周年？",
+          opts: ["150 周年", "155 周年", "160 周年", "165 周年"],
+          a: 2, e: "孙中山先生生于 1866 年，1866 + 160 = 2026，诞辰 160 周年。" },
+        { q: "新修订的《中华人民共和国国防动员法》自何时起施行？",
+          opts: ["2026 年 8 月 28 日", "2026 年 10 月 1 日", "2027 年 1 月 1 日", "2027 年 3 月 22 日"],
+          a: 1, e: "新《国防动员法》2026 年 8 月 28 日修订通过（那是「通过」不是「施行」），共 14 章 82 条，自 2026 年 10 月 1 日起施行。" },
+        { q: "2026 年 11 月 6 日十四届全国人大常委会第二十五次会议闭幕，下列哪部法律没有在这次会议上通过？",
+          opts: ["《中华人民共和国检察公益诉讼法》", "《中华人民共和国南极活动与环境保护法》", "《中华人民共和国反跨境腐败法》", "《中华人民共和国国防动员法》"],
+          a: 3, e: "11 月 6 日通过的是检察公益诉讼法、南极活动与环境保护法、新修订水法、反跨境腐败法；国防动员法是 8 月 28 日通过、10 月 1 日施行的。" },
+        { q: "2026 年 11 月 6 日通过的《中华人民共和国检察公益诉讼法》自何时起施行？",
+          opts: ["自公布之日起", "2026 年 11 月 6 日", "2027 年 1 月 1 日", "2027 年 3 月 22 日"],
+          a: 2, e: "检察公益诉讼法和南极活动与环境保护法都是 2027 年 1 月 1 日施行；新修订水法是 2027 年 3 月 22 日；反跨境腐败法才是自公布之日起施行。" },
+        { q: "中国人民银行 2026 年 11 月 3 日宣布，自 11 月 15 日起将金融机构外汇存款准备金率上调至多少？",
+          opts: ["4%", "5%", "6%", "8%"],
+          a: 2, e: "由 4% 上调 2 个百分点到 6%，为近五年来首次上调，背景是人民币对美元汇率延续升值。注意宣布日（11 月 3 日）和生效日（11 月 15 日）是两个日期。" },
+        { q: "亚太经合组织第三十三次领导人非正式会议 2026 年 11 月 18—19 日在哪个城市举行？",
+          opts: ["北京", "上海", "广州", "深圳"],
+          a: 3, e: "2026 年是 APEC「中国年」，领导人非正式会议在深圳举行，习近平主持；APEC 工商领导人峰会 11 月 17—18 日也在深圳。" },
+        { q: "2026 年世界互联网大会乌镇峰会的主题是？",
+          opts: ["「智能互联 开放合作」", "「开源开放 共建共享——携手构建网络空间命运共同体」", "「迈向数字文明新时代」", "「数字赋能 共创未来」"],
+          a: 1, e: "第 13 届乌镇峰会 11 月 3 日开幕，主题「开源开放 共建共享——携手构建网络空间命运共同体」；领先科技奖 11 月 2 日先颁，「九章四号」光量子计算原型机获奖。" },
+        { q: "第 140 届广交会 2026 年 10 月在广州举办，今年适逢广交会创办多少周年？",
+          opts: ["60 周年", "65 周年", "70 周年", "75 周年"],
+          a: 2, e: "广交会创办 70 周年，被称为「中国第一展」；本届 3 万多家企业参展、约 34 万名境外采购商到会。" },
+        { q: "2026 年新版国家医保药品目录新增药品多少种，并于何时起正式实施？",
+          opts: ["新增 91 种，2026 年 12 月 1 日", "新增 107 种，2027 年 1 月 1 日", "新增 107 种，2026 年 11 月 14 日", "新增 120 种，2027 年 3 月 1 日"],
+          a: 1, e: "11 月 14 日在苏州发布：新增 107 种（其中一类新药 51 个），目录总数达 3331 个，2027 年 1 月 1 日起实施；CAR-T 等首次纳入医保。" },
+        { q: "中国航天事业创建于哪一年？（2026 年 10 月 8 日为创建 70 周年）",
+          opts: ["1949 年", "1956 年", "1970 年", "2003 年"],
+          a: 1, e: "1956 年 10 月 8 日国防部第五研究院成立，标志中国航天事业创建。" },
+        { q: "神舟二十四号载人飞行任务将迎来中国空间站首位外籍航天员，这名航天员来自哪个国家、身份是什么？",
+          opts: ["巴基斯坦，载荷专家", "马来西亚，飞行工程师", "巴基斯坦，指令长", "哈萨克斯坦，载荷专家"],
+          a: 0, e: "11 月 7 日宣布：1 名巴基斯坦航天员以载荷专家身份参加神舟二十四号任务，是中国载人航天首次中外航天员联合飞行。注意：任务尚未发射，不要写成已发射。" },
+        { q: "关于 2026 年 10 月 8 日发布的《新就业形态劳动者权益保障办法》，下列说法正确的是？",
+          opts: ["已经正式施行", "是征求意见稿，公开征求意见至 11 月 8 日，尚未正式施行", "已被废止", "只适用于外卖骑手"],
+          a: 1, e: "它目前是征求意见稿（共 54 条），把约 8400 万新就业形态劳动者纳入保障、规范算法管理；「征求意见稿 ≠ 已生效」是这类题最爱挖的坑。" }
+      ];
+
+      var quizBox = document.getElementById("quiz-box");
+      var round = [], idx = 0, score = 0, wrongs = [], answered = false, mode = "random";
+      var LETTERS = ["A", "B", "C", "D"];
+
+      /* ---------- 跨次保存：成绩与错题本存本机浏览器 ---------- */
+      var STORE_KEY = "shizheng-study-v1";
+      var store = { history: [], wrongs: [] };
+      function loadStore() {
+        try {
+          var raw = localStorage.getItem(STORE_KEY);
+          if (raw) {
+            var d = JSON.parse(raw);
+            if (d && Array.isArray(d.history) && Array.isArray(d.wrongs)) store = d;
+          }
+        } catch (err) { /* 存储不可用时退回本次打开内有效 */ }
+      }
+      function saveStore() {
+        try { localStorage.setItem(STORE_KEY, JSON.stringify(store)); } catch (err) {}
+      }
+      loadStore();
+
+      function shuffle(arr) {
+        var a = arr.slice();
+        for (var i = a.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var t = a[i]; a[i] = a[j]; a[j] = t;
+        }
+        return a;
+      }
+
+      function makeRound(entries) {
+        return entries.map(function (en) {
+          var item = en.item;
+          var order = shuffle([0, 1, 2, 3]);
+          return {
+            bid: en.id,
+            q: item.q,
+            opts: order.map(function (k) { return item.opts[k]; }),
+            a: order.indexOf(item.a),
+            e: item.e
+          };
+        });
+      }
+
+      function quizStart() {
+        mode = "random";
+        var entries = shuffle(BANK.map(function (item, i) { return { item: item, id: i }; })).slice(0, 10);
+        round = makeRound(entries);
+        idx = 0; score = 0; wrongs = [];
+        quizQuestion();
+      }
+
+      function quizRedo() {
+        mode = "redo";
+        var entries = store.wrongs.map(function (w) { return { item: BANK[w.id], id: w.id }; })
+          .filter(function (en) { return !!en.item; });
+        if (!entries.length) return;
+        round = makeRound(shuffle(entries));
+        idx = 0; score = 0; wrongs = [];
+        quizQuestion();
+      }
+
+      function quizQuestion() {
+        answered = false;
+        var item = round[idx];
+        var html = '<div class="q-progress"><div class="bar"><i style="width:' + (idx / round.length * 100) + '%"></i></div>'
+          + '<span class="txt">第 ' + (idx + 1) + ' / ' + round.length + ' 题 · 已对 ' + score + ' 题</span></div>'
+          + '<p class="q-text">' + esc(item.q) + '</p><div class="opts">';
+        item.opts.forEach(function (o, i) {
+          html += '<button type="button" class="opt" data-i="' + i + '"><span class="letter">' + LETTERS[i] + '</span><span>' + esc(o) + '</span></button>';
+        });
+        html += '</div><div class="explain" id="q-explain"></div><div class="q-actions" id="q-actions"></div>';
+        quizBox.innerHTML = html;
+        quizBox.querySelectorAll(".opt").forEach(function (btn) {
+          btn.addEventListener("click", function () { answer(parseInt(btn.getAttribute("data-i"), 10)); });
+        });
+      }
+
+      function answer(choice) {
+        if (answered) return;
+        answered = true;
+        var item = round[idx];
+        var ok = choice === item.a;
+        if (ok) { score++; } else { wrongs.push({ bid: item.bid, q: item.q, right: item.opts[item.a], e: item.e }); }
+        quizBox.querySelectorAll(".opt").forEach(function (btn) {
+          var i = parseInt(btn.getAttribute("data-i"), 10);
+          btn.disabled = true;
+          if (i === item.a) btn.classList.add("right");
+          else if (i === choice) btn.classList.add("wrong");
+        });
+        var ex = document.getElementById("q-explain");
+        ex.className = "explain show " + (ok ? "ok" : "no");
+        ex.innerHTML = '<p class="verdict">' + (ok ? "✓ 答对了" : "✗ 答错了，正确答案：" + LETTERS[item.a] + "．" + esc(item.opts[item.a])) + '</p><p>' + esc(item.e) + '</p>';
+        var act = document.getElementById("q-actions");
+        var last = idx === round.length - 1;
+        act.innerHTML = '<button type="button" class="btn" id="q-next">' + (last ? "看成绩" : "下一题") + '</button>';
+        document.getElementById("q-next").addEventListener("click", function () {
+          idx++;
+          if (idx < round.length) quizQuestion(); else quizResult();
+        });
+        ex.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      }
+
+      function quizResult() {
+        /* 保存本组成绩；错题并入错题本（同一题只记一条，累计错次）；重做答对的移出错题本 */
+        store.history.push({ ts: Date.now(), score: score, total: round.length, mode: mode });
+        if (store.history.length > 50) store.history = store.history.slice(store.history.length - 50);
+        var wrongIds = {};
+        wrongs.forEach(function (w) { wrongIds[w.bid] = true; });
+        wrongs.forEach(function (w) {
+          var found = null;
+          store.wrongs.forEach(function (sw) { if (sw.id === w.bid) found = sw; });
+          if (found) { found.count++; found.ts = Date.now(); }
+          else store.wrongs.push({ id: w.bid, count: 1, ts: Date.now() });
+        });
+        if (mode === "redo") {
+          store.wrongs = store.wrongs.filter(function (sw) { return !!wrongIds[sw.id]; });
+        }
+        saveStore();
+        renderStudy();
+
+        var msg;
+        if (score >= 9) msg = "掌握得很扎实，本期重点基本拿下。";
+        else if (score >= 7) msg = "大方向对了，回看下面错题的讲评，把细节补上。";
+        else if (score >= 5) msg = "过半了。建议回到对应月份，把错题涉及的条目连考点提示再读一遍。";
+        else msg = "先别急着刷题，回到对应月份的页签把条目过一遍，重点看带 ★ 的和数字类考点，再来一组。";
+        var html = '<p class="score-sub">本组得分</p><p class="score-big">' + score + ' / ' + round.length + '</p>'
+          + '<p class="score-sub">' + msg + '</p>'
+          + '<div class="score-btns"><button type="button" class="btn" id="q-again">再来一组（重新抽题）</button></div>';
+        if (wrongs.length) {
+          html += '<div class="wrong-list"><h4>本组错题回顾（' + wrongs.length + ' 道）</h4>';
+          wrongs.forEach(function (w) {
+            html += '<div class="wrong-item"><p class="wq">' + esc(w.q) + '</p>'
+              + '<p class="wa">正确答案：' + esc(w.right) + '</p><p>' + esc(w.e) + '</p></div>';
+          });
+          html += '</div>';
+        }
+        quizBox.innerHTML = html;
+        document.getElementById("q-again").addEventListener("click", quizStart);
+      }
+
+      /* ---------- 成绩面板与错题本 ---------- */
+      function fmtDate(ts) {
+        var d = new Date(ts);
+        return (d.getMonth() + 1) + " 月 " + d.getDate() + " 日";
+      }
+      function renderStudy() {
+        var panel = document.getElementById("study-panel");
+        var total = store.history.length;
+        var lastScore = "—";
+        if (total) { var lh = store.history[total - 1]; lastScore = lh.score + " / " + lh.total; }
+        var html = '<div class="study-panel">'
+          + '<div class="stat"><div class="n">' + total + '</div><div class="l">累计刷题组数</div></div>'
+          + '<div class="stat"><div class="n">' + lastScore + '</div><div class="l">最近一组成绩</div></div>'
+          + '<div class="stat"><div class="n">' + store.wrongs.length + '</div><div class="l">错题本题目数</div></div></div>';
+        if (total) {
+          html += '<p class="hist">历次成绩：';
+          store.history.slice(-8).reverse().forEach(function (h) {
+            html += '<span>' + fmtDate(h.ts) + ' · ' + h.score + '/' + h.total + (h.mode === "redo" ? "（错题重做）" : "") + '</span>';
+          });
+          html += '</p>';
+        }
+        panel.innerHTML = html;
+        renderWrongBook();
+      }
+      function renderWrongBook() {
+        var box = document.getElementById("wrong-book");
+        var html = '<div class="wb-head"><h4>错题本（' + store.wrongs.length + ' 道）</h4>';
+        if (store.wrongs.length) {
+          html += '<div class="wb-btns"><button type="button" class="btn small" id="wb-redo">错题重做</button>'
+            + '<button type="button" class="btn ghost small" id="wb-clear">清空错题本</button></div>';
+        }
+        html += '</div>';
+        if (!store.wrongs.length) {
+          html += '<p class="empty-note">还没有错题。刷题时答错的题会自动收进这里，关掉页面也不会丢；用「错题重做」答对后会自动移出。</p>';
+        } else {
+          store.wrongs.slice().sort(function (a, b) { return b.ts - a.ts; }).forEach(function (w) {
+            var item = BANK[w.id];
+            if (!item) return;
+            html += '<div class="wrong-item"><p class="wq">' + esc(item.q) + '</p>'
+              + '<p class="wa">正确答案：' + esc(item.opts[item.a]) + '</p><p>' + esc(item.e) + '</p>'
+              + '<div class="wb-meta"><span class="cnt">答错 ' + w.count + ' 次</span>'
+              + '<button type="button" class="rm" data-rm="' + w.id + '">移出</button></div></div>';
+          });
+        }
+        box.innerHTML = html;
+        var redo = document.getElementById("wb-redo");
+        if (redo) redo.addEventListener("click", function () {
+          quizRedo();
+          document.getElementById("quiz-box").scrollIntoView({ block: "start", behavior: "smooth" });
+        });
+        var clear = document.getElementById("wb-clear");
+        if (clear) clear.addEventListener("click", function () {
+          store.wrongs = []; saveStore(); renderStudy();
+        });
+        box.querySelectorAll("[data-rm]").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            var id = parseInt(btn.getAttribute("data-rm"), 10);
+            store.wrongs = store.wrongs.filter(function (w) { return w.id !== id; });
+            saveStore(); renderStudy();
+          });
+        });
+      }
+      renderStudy();
+
+      quizBox.innerHTML = '<div class="quiz-start"><p>每组从 38 道题里随机抽 10 道，覆盖 1—11 月全年时政，选项顺序随机打乱。点选后立即判分并给出讲评，讲评都对应页面里的时政条目，答错了可以顺着回去看原文。成绩会记进上面的历次成绩，错题自动进错题本。</p>'
+        + '<button type="button" class="btn" id="q-start">开始刷题</button></div>';
+      document.getElementById("q-start").addEventListener("click", quizStart);
+    </script>
+  </body>
+</html>
